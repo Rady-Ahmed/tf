@@ -28,6 +28,7 @@ pnpm-debug.log*
 
 # Temporary migration & inspection scripts
 audit-sections.cjs
+print-*.cjs
 check-*.cjs
 inspect*.cjs
 test-*.cjs

@@ -698,9 +698,35 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
 <body>
 <div class="prog" id="prog"></div>
 <header class="bar" id="bar">
-  <a class="logo" href="#gate" aria-label="الصفحة الرئيسية لعائلة آل راضي"><span class="brand-seal" aria-hidden="true">ر</span><span class="brand-name">راضي<small>شجرة العائلة وذاكرتها</small></span></a>
+  <a class="logo" href="#gate" aria-label="الصفحة الرئيسية لعائلة آل راضي">
+    <svg class="brand-crest-svg" viewBox="0 0 100 100" width="48" height="48" aria-hidden="true">
+      <defs>
+        <linearGradient id="crestGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FFF5CC"/>
+          <stop offset="35%" stop-color="#E5B85C"/>
+          <stop offset="70%" stop-color="#C8A04A"/>
+          <stop offset="100%" stop-color="#9A7228"/>
+        </linearGradient>
+        <linearGradient id="crestTealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#0E4B4F"/>
+          <stop offset="100%" stop-color="#042629"/>
+        </linearGradient>
+        <filter id="crestGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#C8A04A" flood-opacity="0.4"/>
+        </filter>
+      </defs>
+      <!-- Geometric 8-point Islamic Royal Star Medallion -->
+      <rect x="18" y="18" width="64" height="64" rx="14" fill="url(#crestTealGrad)" stroke="url(#crestGoldGrad)" stroke-width="2.5" filter="url(#crestGlow)"/>
+      <rect x="18" y="18" width="64" height="64" rx="14" fill="none" stroke="url(#crestGoldGrad)" stroke-width="2" transform="rotate(45 50 50)"/>
+      <!-- Inner Gold Ring -->
+      <circle cx="50" cy="50" r="30" fill="none" stroke="url(#crestGoldGrad)" stroke-width="1.2" stroke-dasharray="3,2"/>
+      <!-- Handcrafted Arabic Typography "راضي" -->
+      <text x="50" y="58" text-anchor="middle" font-family="'Aref Ruqaa', 'Amiri', serif" font-weight="700" font-size="28" fill="url(#crestGoldGrad)" letter-spacing="0.5">راضي</text>
+    </svg>
+    <span class="brand-name">آل راضي<small>شجرة العائلة وذاكرتها</small></span>
+  </a>
   <button class="menu-toggle" id="menuToggle" aria-label="فتح القائمة" aria-expanded="false">☰</button>
-  <nav id="mainNav"><a href="#about">من نحن</a><a href="#stack">الأجيال</a><a href="#tree">شجرة النسب</a><a href="#ring">أفراد العائلة</a><a href="#diwan">ديوان العائلة</a><a href="#memorial">أثر لا يغيب</a><a href="#games">الألعاب</a><a href="#contribute">تحديث البيانات</a><a href="#trackModal" id="navTrackBtn">تتبع طلب</a><a href="#faq">الأسئلة</a></nav>
+  <nav id="mainNav"><a href="#about">من نحن</a><a href="#stack">الأجيال</a><a href="#tree">شجرة النسب</a><a href="#ring">أفراد العائلة</a><a href="#talents">شبكة الكفاءات</a><a href="#solidarity">صندوق التكافل</a><a href="#diwan">ديوان العائلة</a><a href="#memorial">أثر لا يغيب</a><a href="#games">الألعاب</a><a href="#contribute">تحديث البيانات</a><a href="#trackModal" id="navTrackBtn">تتبع طلب</a><a href="#faq">الأسئلة</a></nav>
   <button class="audio-btn" id="btnAudioRecitation" type="button" title="استمع لتلاوة الآية الكريمة"><span>تلاوة</span><i>🔊</i></button>
   <a class="go" href="#contribute">طلب تحديث</a>
 </header>
@@ -846,9 +872,147 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
 </div>
 
 <!-- ================= أثر لا يغيب: ترحم على الراحلين ================= -->
+
+<!-- ========================================================
+     1. DIWAN AL-TALENTS: BUSINESS & PROFESSIONAL NETWORK
+     ======================================================== -->
+<section class="sec" id="talents">
+  <div class="sec-head-wrap">
+    <span class="sec-tag">كفاءات وأعلام</span>
+    <h2 class="disp">ملتقى كفاءات وشبكة أعمال آل راضي</h2>
+    <div class="orn"></div>
+    <p class="sub">دليل مهني واقتصادي يوحد طاقات أبناء وبنات العائلة، لفتح آفاق التدريب والتوظيف، وتقديم الاستشارات، ودعم مسيرة الأجيال الصاعدة.</p>
+  </div>
+
+  <div class="talents-categories-grid">
+    <!-- Legal & Judiciary -->
+    <div class="talent-cat-card cat-legal">
+      <div class="tcat-header">
+        <span class="tcat-icon">⚖️</span>
+        <div>
+          <h4>القضاء والمحاماة والاستشارات</h4>
+          <small>رجال العدل والقانون من أبناء العائلة</small>
+        </div>
+      </div>
+      <p>تقديم المشورة القانونية لأبناء العائلة، والدفاع عن الحقوق، وتوعية الأجيال، والمساهمة في لجان التحكيم وفض النزاعات.</p>
+      <div class="tcat-footer">
+        <span class="tcat-count">مستشارون ومحامون معتمدون</span>
+      </div>
+    </div>
+
+    <!-- Medicine & Healthcare -->
+    <div class="talent-cat-card cat-medical">
+      <div class="tcat-header">
+        <span class="tcat-icon">🩺</span>
+        <div>
+          <h4>الطب والجراحة والرعاية الصحية</h4>
+          <small>أطباء وصيادلة واستشاريو آل راضي</small>
+        </div>
+      </div>
+      <p>شبكة أطباء العائلة في مختلف التخصصات، لتقديم الرأي الطبي التخصصي، والمساعدة في التوجيه العلاجي لأبناء العائلة.</p>
+      <div class="tcat-footer">
+        <span class="tcat-count">رعاية ومساندة طبية</span>
+      </div>
+    </div>
+
+    <!-- Engineering & Architecture -->
+    <div class="talent-cat-card cat-eng">
+      <div class="tcat-header">
+        <span class="tcat-icon">📐</span>
+        <div>
+          <h4>الهندسة والعمارة والتكنولوجيا</h4>
+          <small>بناة المستقبل والتحول الرقمي</small>
+        </div>
+      </div>
+      <p>استشارات هندسية ومعمارية وتقنية، وتوجيه وتدريب خريجي الهندسة والحاسبات لتمكينهم من سوق العمل العالمي.</p>
+      <div class="tcat-footer">
+        <span class="tcat-count">هندسة وبناء وابتكار</span>
+      </div>
+    </div>
+
+    <!-- Business & Commerce -->
+    <div class="talent-cat-card cat-biz">
+      <div class="tcat-header">
+        <span class="tcat-icon">💼</span>
+        <div>
+          <h4>التجارة وريادة الأعمال</h4>
+          <small>أصحاب الأعمال والمبادرات الاقتصادية</small>
+        </div>
+      </div>
+      <p>شراكات تجارية، توفير فرص عمل وتدريب لأبناء العائلة، وتبادل الخبرات الاستثمارية والتجارية في الداخل والخارج.</p>
+      <div class="tcat-footer">
+        <span class="tcat-count">فرص عمل وشراكات</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="talent-join-cta">
+    <span>هل أنت من كفاءات العائلة؟ سجل تخصصك ومجالك لخدمة إخوانك وأبناء عمومتك</span>
+    <a href="#contribute" class="btn-join-network">انضم إلى دليل الكفاءات ✍️</a>
+  </div>
+</section>
+
+<!-- ========================================================
+     2. SOLIDARITY FUND & ELDERS ARBITRATION COUNCIL
+     ======================================================== -->
+<section class="sec" id="solidarity">
+  <div class="sec-head-wrap">
+    <span class="sec-tag">تراحم وتماسك</span>
+    <h2 class="disp">صندوق التكافل ومجلس حكماء العائلة</h2>
+    <div class="orn"></div>
+    <p class="sub">تجسيداً لوصية الأجداد في التكاتف وصلة الرحم؛ مبادرة لدعم المحتاج، وتشجيع العلم، وإصلاح ذات البين بروح المشيخة التاريخية.</p>
+  </div>
+
+  <div class="solidarity-pillars-grid">
+    <div class="pillar-card">
+      <div class="pillar-icon">🎓</div>
+      <h4>صندوق التعليم والتفوق</h4>
+      <p>تكريم سنوي لحفظة القرآن والطلاب المتفوقين في الثانوية والجامعات، وتقديم المساعدة في المصروفات الدراسية للطلبة المتعثرين.</p>
+    </div>
+
+    <div class="pillar-card">
+      <div class="pillar-icon">💍</div>
+      <h4>تيسير زواج الشباب</h4>
+      <p>مبادرة عائلية للإسهام في تيسير نفقات الزواج لشباب وفتيات العائلة، وتقديم الدعم العيني والمعنوي لبناء أسر متماسكة.</p>
+    </div>
+
+    <div class="pillar-card">
+      <div class="pillar-icon">🩺</div>
+      <h4>صندوق الرعاية والطوارئ</h4>
+      <p>سند عائلي يقف بجانب الأسر في الحالات الصحية الحرجة والطوارئ غير المتوقعة، ليبقى أبناء آل راضي سنداً لبعضهم دوماً.</p>
+    </div>
+
+    <div class="pillar-card">
+      <div class="pillar-icon">🏛️</div>
+      <h4>مجلس الحكماء والتحكيم الأسري</h4>
+      <p>هيئة عرفية من كبار وحكماء فروع آل راضي، تواصل نهج الأجداد في إصلاح ذات البين، وحل النزاعات بالحكمة والعدل، وحفظ كرامة البيت الواحد.</p>
+    </div>
+  </div>
+</section>
+
 <section class="sec" id="memorial">
   <div class="fatiha-box">
     <div class="fatiha-title">أثرٌ لا يغيب · في رحاب الخالدين</div>
+    <!-- Minshawi Audio Recitation Player -->
+    <div class="minshawi-player-box" id="minshawiPlayer">
+      <div class="mp-info">
+        <span class="mp-icon">🎙️</span>
+        <div class="mp-text">
+          <b>سورة الفاتحة · بصوت الشيخ محمد صديق المنشاوي</b>
+          <small>تلاوة مرتلة خاشعة ترحماً على أرواح أجداد وآباء آل راضي</small>
+        </div>
+      </div>
+      <div class="mp-controls">
+        <button type="button" class="mp-play-btn" id="btnPlayMinshawi" title="تشغيل / إيقاف التلاوة">
+          <span id="mpPlayIcon">▶</span>
+          <span id="mpPlayLabel">استمع للتلاوة</span>
+        </button>
+        <div class="mp-wave" id="mpWave">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+      <audio id="audioMinshawiFatiha" preload="none" src="https://server10.mp3quran.net/minsh/001.mp3"></audio>
+    </div>
     <div class="orn" style="margin: 0 auto 1rem;"></div>
     <p style="color:var(--muted); font-size:1.05rem;">نذكر أجدادنا وآباءنا الذين بنوا هذا المجد وتركوا لنا أثراً طيباً، سائلين الله لهم الرحمة والمغفرة والرضوان.</p>
     <div class="fatiha-text">
@@ -1580,7 +1744,10 @@ function saveAll(){persist();refreshAll()}
 
 // -- HTML nested tree
 const li=(n,d)=>{const cl=collapsed.has(n.u);
-  return `<li><div class="col"><div class="p${n.u===ME?' me':''}${d===0?' root':''}" data-i="${n.id}" tabindex="0" role="button" style="${pcs(n)}"><span class="pv">${n.img?`<img src="${n.img}" alt="">`:n.n[0]}</span><b>${n.n}</b></div>${n.k.length?`<button class="bdg" data-t="${n.id}">${cl?'▸':'▾'} ${n.k.length===1?'ابن واحد':n.k.length===2?'ابنان':ad(n.k.length)+' أبناء'}</button>`:''}</div>${n.k.length&&!cl?`<ul>${n.k.slice().reverse().map(k=>li(k,d+1)).join('')}</ul>`:''}</li>`};
+  const pc = getProfCat(n);
+  const profCls = pc ? (' p-prof-' + pc.cat) : '';
+  const profBadge = pc ? ('<span class="pv-prof-icon" title="' + pc.name + '">' + pc.icon + '</span>') : '';
+  return `<li><div class="col"><div class="p${n.u===ME?' me':''}${d===0?' root':''}${profCls}" data-i="${n.id}" tabindex="0" role="button" style="${pcs(n)}"><span class="pv">${n.img?`<img src="${n.img}" alt="">`:n.n[0]}${profBadge}</span><b>${n.n}</b></div>${n.k.length?`<button class="bdg" data-t="${n.id}">${cl?'▸':'▾'} ${n.k.length===1?'ابن واحد':n.k.length===2?'ابنان':ad(n.k.length)+' أبناء'}</button>`:''}</div>${n.k.length&&!cl?`<ul>${n.k.slice().reverse().map(k=>li(k,d+1)).join('')}</ul>`:''}</li>`};
 function viewTree(){ht.innerHTML=`<ul>${li(focusN||T,0)}</ul>`;ht.style.zoom=zoom;finish()}
 
 // -- live organic tree
@@ -1729,9 +1896,55 @@ addEventListener('pointerup',()=>{drag=null});
 svg.addEventListener('pointerdown',e=>{if(mode!=='net')return;const g=e.target.closest('.node');if(g){drag=ALL[+g.dataset.i];moved=0}});
 
 // -- flip cards
-function viewCards(){
-  $('cards').innerHTML=sub().map((n,i)=>`<button class="pt" data-open="${n.id}" style="--i:${Math.min(i,20)};${pcs(n)}"><span class="pt-in"><span class="pt-f"><span class="pt-ph">${n.img?`<img src="${n.img}" alt="">`:n.n[0]}</span><b class="disp">${n.n}</b><small>${n.sf}</small><small>${n.y}</small></span><span class="pt-b"><b class="disp">${n.n}</b><small>${n.job||nasab(n,3)}</small><small>${n.pl||GEN[n.d]}</small><em>افتح البطاقة</em></span></span></button>`).join('');
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SPECIALIZED PROFESSIONS ENGINE (مستشارون، أطباء، مهندسون، عمد ومشايخ)
+// ═══════════════════════════════════════════════════════════════════════════
+function getProfCat(n) {
+  if (!n) return null;
+  const t = ((n.job || '') + ' ' + (n.sf || '') + ' ' + (n.titles ? n.titles.join(' ') : '')).toLowerCase();
+  if (/مستشار|قاض|محام|نياب|قانون/.test(t)) return { cat: 'legal', icon: '⚖️', name: 'قضاء ومحاماة', title: 'مستشار وقانوني' };
+  if (/دكتور|طبيب|جراح|صيدل|علاج/.test(t)) return { cat: 'medical', icon: '🩺', name: 'طب ورعاية صحية', title: 'طبيب العائلة' };
+  if (/مهندس|معمار|تخطيط|هندس/.test(t)) return { cat: 'eng', icon: '📐', name: 'هندسة وتخطيط', title: 'مهندس العائلة' };
+  if (/عمدة|شيخ بلد|أعيان|عمودية/.test(t)) return { cat: 'notable', icon: '🏛️', name: 'عمودية وأعيان', title: 'رمز وأعيان العائلة' };
+  if (/أستاذ|بروفيسور|معلم|عميد|باحث/.test(t)) return { cat: 'edu', icon: '🎓', name: 'تعليم وأكاديميا', title: 'عالم وأكاديمي' };
+  if (/رجل أعمال|تاجر|شركة|أعمال/.test(t)) return { cat: 'biz', icon: '💼', name: 'تجارة وأعمال', title: 'رائد أعمال' };
+  if (/قرآن|أزهر|إمام|خطيب|حافظ/.test(t)) return { cat: 'scholar', icon: '📖', name: 'حفظة القرآن', title: 'حافظ لكتاب الله' };
+  return null;
 }
+
+function viewCards(){
+  $('cards').innerHTML = sub().map((n, i) => {
+    const pc = getProfCat(n);
+    const catClass = pc ? (' pt-cat-' + pc.cat) : '';
+    const catBadge = pc ? ('<span class="pt-cat-badge">' + pc.icon + ' ' + (n.job || pc.name) + '</span>') : '';
+    return '<button class="pt' + catClass + '" data-open="' + n.id + '" style="--i:' + Math.min(i, 20) + ';' + pcs(n) + '">' +
+      '<span class="pt-in">' +
+        '<!-- Card Front -->' +
+        '<span class="pt-f">' +
+          '<span class="pt-ph">' +
+            (n.img ? ('<img src="' + n.img + '" alt="' + n.n + '">') : n.n[0]) +
+            (pc ? ('<span class="pt-corner-badge" title="' + pc.name + '">' + pc.icon + '</span>') : '') +
+          '</span>' +
+          '<b class="disp">' + n.n + '</b>' +
+          catBadge +
+          '<small>' + n.sf + '</small>' +
+          '<small>' + (n.y || '') + '</small>' +
+        '</span>' +
+        '<!-- Card Back with Distinct Themed Styling -->' +
+        '<span class="pt-b">' +
+          (pc ? ('<div class="pt-watermark">' + pc.icon + '</div>') : '') +
+          '<b class="disp">' + n.n + '</b>' +
+          '<span class="pt-b-role">' + (pc ? (pc.icon + ' ' + (n.job || pc.title)) : (n.job || 'من أبناء آل راضي')) + '</span>' +
+          '<small class="pt-b-nasab">' + nasab(n, 3) + '</small>' +
+          '<small class="pt-b-place">📍 ' + (n.pl || 'شارونة، المنيا') + '</small>' +
+          '<em class="pt-b-cta">افتح الملف الكامل ↗</em>' +
+        '</span>' +
+      '</span>' +
+    '</button>';
+  }).join('');
+}
+
 renderCards=viewCards;
 
 // -- selection panel
@@ -3563,6 +3776,346 @@ p {
   line-height: 1.7;
 }
 
+
+/* ========================================================
+   MASTER BRANDING, MINSHAWI AUDIO, & PROFESSIONS CSS
+   ======================================================== */
+
+/* ── 1. ROYAL CALLIGRAPHIC CREST LOGO ── */
+.brand-crest-svg {
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s;
+}
+.logo:hover .brand-crest-svg {
+  transform: rotate(5deg) scale(1.08);
+  filter: drop-shadow(0 0 10px rgba(200, 160, 74, 0.6));
+}
+
+/* ── 2. MINSHAWI AUDIO RECITATION PLAYER ── */
+.minshawi-player-box {
+  background: rgba(7, 27, 31, 0.95);
+  border: 1.5px solid #C8A04A;
+  border-radius: 16px;
+  padding: 1rem 1.4rem;
+  margin: 1.25rem auto 1.5rem;
+  max-width: 580px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(200, 160, 74, 0.15);
+  backdrop-filter: blur(12px);
+}
+.mp-info {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  text-align: right;
+  flex: 1;
+  min-width: 220px;
+}
+.mp-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+.mp-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.35;
+}
+.mp-text b {
+  color: #C8A04A;
+  font-family: "Aref Ruqaa", serif;
+  font-size: 1.05rem;
+}
+.mp-text small {
+  color: #94A3B8;
+  font-size: 0.76rem;
+  margin-top: 2px;
+}
+.mp-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.mp-play-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #047857, #065F46);
+  border: 1.5px solid #10B981;
+  color: #FFFFFF;
+  padding: 0.5em 1.2em;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: all 0.25s;
+  box-shadow: 0 4px 15px rgba(4, 120, 87, 0.35);
+}
+.mp-play-btn:hover {
+  background: #10B981;
+  color: #071B1F;
+  transform: translateY(-2px);
+}
+.mp-play-btn.playing {
+  background: #C8A04A;
+  border-color: #E5B85C;
+  color: #071B1F;
+  box-shadow: 0 0 18px rgba(200, 160, 74, 0.5);
+}
+
+/* Audio wave visualizer */
+.mp-wave {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 22px;
+}
+.mp-wave span {
+  width: 3px;
+  height: 6px;
+  background: #C8A04A;
+  border-radius: 999px;
+  transition: height 0.2s;
+}
+.mp-play-btn.playing + .mp-wave span {
+  animation: waveMotion 1s ease-in-out infinite alternate;
+}
+.mp-play-btn.playing + .mp-wave span:nth-child(2) { animation-delay: 0.2s; }
+.mp-play-btn.playing + .mp-wave span:nth-child(3) { animation-delay: 0.4s; }
+.mp-play-btn.playing + .mp-wave span:nth-child(4) { animation-delay: 0.1s; }
+.mp-play-btn.playing + .mp-wave span:nth-child(5) { animation-delay: 0.3s; }
+@keyframes waveMotion {
+  from { height: 4px; }
+  to { height: 22px; }
+}
+
+/* Recitation reading glow */
+.fatiha-text.reading-glow {
+  text-shadow: 0 0 18px rgba(200, 160, 74, 0.6);
+  border-color: #C8A04A;
+  background: rgba(200, 160, 74, 0.08);
+  transition: all 0.5s;
+}
+
+/* ── 3. SPECIALIZED PROFESSION BADGES ON TREE NODES ── */
+.pv-prof-icon {
+  position: absolute;
+  top: -4px;
+  inset-inline-start: -4px;
+  font-size: 0.85rem;
+  background: var(--panel);
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.p.p-prof-legal { border-color: #818CF8 !important; }
+.p.p-prof-medical { border-color: #34D399 !important; }
+.p.p-prof-eng { border-color: #60A5FA !important; }
+.p.p-prof-notable { border-color: #FBBF24 !important; box-shadow: 0 0 15px rgba(251, 191, 36, 0.25) !important; }
+.p.p-prof-edu { border-color: #C084FC !important; }
+.p.p-prof-biz { border-color: #E2E8F0 !important; }
+.p.p-prof-scholar { border-color: #4ADE80 !important; }
+
+/* ── 4. DISTINCT THEMED CARD BACKS & CORNER BADGES (viewCards) ── */
+.pt-corner-badge {
+  position: absolute;
+  top: 6px;
+  inset-inline-end: 6px;
+  background: rgba(7, 27, 31, 0.85);
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  font-size: 0.85rem;
+}
+.pt-cat-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2em 0.6em;
+  border-radius: 999px;
+  background: rgba(200, 160, 74, 0.15);
+  border: 1px solid #C8A04A;
+  color: #C8A04A;
+  margin: 3px auto;
+  display: inline-block;
+}
+
+/* Card Back Styling */
+.pt-b {
+  position: relative;
+  overflow: hidden;
+}
+.pt-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 5rem;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
+.pt-b-role {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #FFE082;
+  margin: 0.35rem 0;
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+}
+.pt-b-nasab {
+  color: #CBD5E1;
+  font-size: 0.76rem;
+  position: relative;
+  z-index: 1;
+}
+.pt-b-place {
+  color: #94A3B8;
+  font-size: 0.72rem;
+  margin-top: 2px;
+  position: relative;
+  z-index: 1;
+}
+.pt-b-cta {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 0.76rem;
+  color: #34D399;
+  margin-top: 0.6rem;
+  display: inline-block;
+  border-top: 1px dashed rgba(255,255,255,0.15);
+  padding-top: 0.35rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Themed Card Categories */
+.pt.pt-cat-legal .pt-b { background: linear-gradient(135deg, #1E1B4B, #0F172A) !important; border-color: #818CF8 !important; }
+.pt.pt-cat-medical .pt-b { background: linear-gradient(135deg, #064E3B, #042629) !important; border-color: #34D399 !important; }
+.pt.pt-cat-eng .pt-b { background: linear-gradient(135deg, #1E3A8A, #0F172A) !important; border-color: #60A5FA !important; }
+.pt.pt-cat-notable .pt-b { background: linear-gradient(135deg, #78350F, #2A1707) !important; border-color: #FBBF24 !important; }
+.pt.pt-cat-edu .pt-b { background: linear-gradient(135deg, #4C1D95, #1E1B4B) !important; border-color: #C084FC !important; }
+.pt.pt-cat-biz .pt-b { background: linear-gradient(135deg, #334155, #0F172A) !important; border-color: #E2E8F0 !important; }
+.pt.pt-cat-scholar .pt-b { background: linear-gradient(135deg, #14532D, #042629) !important; border-color: #4ADE80 !important; }
+
+/* ── 5. NEW WELFARE SECTIONS (TALENTS & SOLIDARITY) ── */
+.sec-head-wrap {
+  text-align: center;
+  max-width: 780px;
+  margin: 0 auto 2.5rem;
+}
+.sec-tag {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #C8A04A;
+  background: rgba(200, 160, 74, 0.12);
+  border: 1px solid rgba(200, 160, 74, 0.3);
+  padding: 0.25em 1em;
+  border-radius: 999px;
+  margin-bottom: 0.5rem;
+}
+.talents-categories-grid, .solidarity-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: clamp(1rem, 2.5vw, 1.6rem);
+  margin-bottom: 2rem;
+}
+.talent-cat-card, .pillar-card {
+  background: rgba(200, 160, 74, 0.05);
+  border: 1.5px solid rgba(200, 160, 74, 0.25);
+  border-radius: 18px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+.talent-cat-card:hover, .pillar-card:hover {
+  transform: translateY(-4px);
+  border-color: #C8A04A;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+}
+.tcat-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.tcat-icon, .pillar-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+.tcat-header h4, .pillar-card h4 {
+  font-family: "Aref Ruqaa", serif;
+  font-size: 1.2rem;
+  color: #FFFFFF;
+  margin: 0;
+}
+.tcat-header small {
+  color: #C8A04A;
+  font-size: 0.78rem;
+}
+.talent-cat-card p, .pillar-card p {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #CBD5E1;
+  flex: 1;
+}
+.tcat-footer {
+  border-top: 1px dashed rgba(200, 160, 74, 0.25);
+  padding-top: 0.6rem;
+  font-size: 0.75rem;
+  color: #34D399;
+  font-weight: 600;
+}
+.talent-join-cta {
+  background: linear-gradient(135deg, rgba(7, 27, 31, 0.95), rgba(4, 120, 87, 0.25));
+  border: 1.5px solid #C8A04A;
+  border-radius: 18px;
+  padding: 1.25rem 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  text-align: right;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.talent-join-cta span {
+  font-size: 0.95rem;
+  color: #E2E8F0;
+  font-weight: 500;
+}
+.btn-join-network {
+  background: #C8A04A;
+  color: #071B1F !important;
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 0.6em 1.4em;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.btn-join-network:hover {
+  background: #FFE082;
+  transform: translateY(-2px);
+}
+
 </style>
 <button class="fa-fab" id="faContribute" type="button">طلب تحديث أو إضافة <b>＋</b></button>
 <div class="fa-modal" id="faModal" role="dialog" aria-modal="true" aria-labelledby="faTitle"><div class="fa-box"><div class="fa-head"><h2 id="faTitle">مساهمة عائلية</h2><button class="fa-x" id="faClose" aria-label="إغلاق">×</button></div><div id="faContent"></div></div></div>
@@ -4532,6 +5085,56 @@ function openEditProfileModal(node, focusField = '') {
     toast('✨ تم حفظ وتوثيق بيانات الملف الشخصي بنجاح');
   };
 }
+</script>
+
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// SHEIKH MINSHAWI SURAT AL-FATIHA AUDIO CONTROLLER
+// ═══════════════════════════════════════════════════════════════════════════
+(function initMinshawiAudio() {
+  const btn = document.getElementById('btnPlayMinshawi');
+  const audio = document.getElementById('audioMinshawiFatiha');
+  const icon = document.getElementById('mpPlayIcon');
+  const label = document.getElementById('mpPlayLabel');
+  const fatihaText = document.getElementById('fatihaSurahText');
+
+  if (!btn || !audio) return;
+
+  btn.onclick = () => {
+    if (audio.paused) {
+      audio.play().then(() => {
+        btn.classList.add('playing');
+        if (icon) icon.textContent = '⏸';
+        if (label) label.textContent = 'إيقاف مؤقت';
+        if (fatihaText) fatihaText.classList.add('reading-glow');
+        toast('🎙️ جاري الاستماع لتلاوة سورة الفاتحة بصوت الشيخ المنشاوي...');
+      }).catch(err => {
+        console.warn('Audio play error:', err);
+        toast('تعذر تشغيل الصوت تلقائياً، اضغط مرة أخرى');
+      });
+    } else {
+      audio.pause();
+      btn.classList.remove('playing');
+      if (icon) icon.textContent = '▶';
+      if (label) label.textContent = 'استمع للتلاوة';
+      if (fatihaText) fatihaText.classList.remove('reading-glow');
+    }
+  };
+
+  audio.onended = () => {
+    btn.classList.remove('playing');
+    if (icon) icon.textContent = '▶';
+    if (label) label.textContent = 'استمع مجدداً';
+    if (fatihaText) fatihaText.classList.remove('reading-glow');
+
+    // Automatically trigger prayer count upon completing recitation
+    const prayBtn = document.getElementById('btnPrayFatiha');
+    if (prayBtn) {
+      prayBtn.click();
+    }
+  };
+})();
 </script>
 
 </body>
