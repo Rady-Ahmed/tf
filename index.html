@@ -4288,7 +4288,7 @@ if(kind==='person')html=`<form id="contribForm" name="contribForm" class="fa-for
 if(kind==='correction')html=`<form id="faSubmit" class="fa-form"><label class="fa-wide">اختر الفرد *<select name="person" required><option value="">اختر فردًا</option>${personOptions()}</select></label><label>نوع التصحيح *<select name="field"><option value="n">الاسم</option><option value="b">سنة الميلاد</option><option value="dd">سنة الوفاة</option><option value="pl">المكان</option><option value="job">المهنة</option><option value="t">النبذة</option></select></label><label>القيمة الصحيحة المقترحة *<input name="value" required maxlength="300"></label><label class="fa-wide">سبب التصحيح / المصدر<textarea name="details" maxlength="1200"></textarea></label><label>اسم مقدم المساهمة<input name="sender" maxlength="80"></label><label>وسيلة تواصل اختيارية<input name="contact" maxlength="100"></label><div class="fa-wide fa-actions"><button class="fa-btn">إرسال التصحيح</button></div></form>`;
 if(kind==='story')html=`<form id="faSubmit" class="fa-form"><label>عنوان القصة *<input name="title" required maxlength="120"></label><label>الشخص أو الفرع المرتبط<select name="person"><option value="">غير محدد</option>${personOptions()}</select></label><label class="fa-wide">القصة أو الذكرى *<textarea name="body" required maxlength="5000" style="min-height:160px"></textarea></label><label>الفترة التقريبية<input name="period" maxlength="80" placeholder="مثلاً: منتصف القرن الماضي"></label><label>اسم الراوي<input name="sender" maxlength="80"></label><label class="fa-wide">مصدر أو شهود أو توضيح<textarea name="details" maxlength="1000"></textarea></label><div class="fa-wide fa-actions"><button class="fa-btn">إرسال القصة</button></div></form>`;
 if(kind==='photo')html=`<form id="faSubmit" class="fa-form"><label>وصف الصورة / الوثيقة *<input name="title" required maxlength="120"></label><label>الفرد أو الفرع المرتبط<select name="person"><option value="">غير محدد</option>${personOptions()}</select></label><label class="fa-wide">اختر ملفًا (صورة فقط في النسخة التجريبية)<input name="file" type="file" accept="image/*" required></label><div class="fa-wide" id="faFilePreview"></div><label>التاريخ التقريبي<input name="period" maxlength="80"></label><label>اسم صاحب الصورة / مقدمها<input name="sender" maxlength="80"></label><label class="fa-wide">تفاصيل إضافية<textarea name="details" maxlength="1000"></textarea></label><div class="fa-wide fa-note">الصورة تُحفظ محليًا في هذا المتصفح للتجربة. لا ترفع صورًا خاصة أو وثائق تحتوي بيانات حساسة.</div><div class="fa-wide fa-actions"><button class="fa-btn">إرسال للمراجعة</button></div></form>`;
-host.innerHTML=html;const form=$('faSubmit');form.onsubmit=async e=>{e.preventDefault();const fd=new FormData(form),d=Object.fromEntries(fd.entries());if(kind==='person'){d.birth=d.birth?Number(d.birth):null;d.death=d.death?Number(d.death):null}if(kind==='photo'){const file=fd.get('file');if(file.size>1200000){alert('حجم الصورة أكبر من 1.2MB في النسخة التجريبية.');return}d.image=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)});delete d.file}delete d.file;newRequest(kind,d);const reqItem = requests[0];
+host.innerHTML=html;const form=$('faSubmit');form.onsubmit=async e=>{e.preventDefault();if(typeof window.checkActionRateLimit==='function'&&!window.checkActionRateLimit('contribution'))return;const fd=new FormData(form),d=Object.fromEntries(fd.entries());if(kind==='person'){d.birth=d.birth?Number(d.birth):null;d.death=d.death?Number(d.death):null}if(kind==='photo'){const file=fd.get('file');if(file.size>1200000){alert('حجم الصورة أكبر من 1.2MB في النسخة التجريبية.');return}d.image=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)});delete d.file}delete d.file;newRequest(kind,d);const reqItem = requests[0];
 const waDetails = encodeURIComponent(
   '🌟 *طلب مساهمة جديد في شجرة آل راضي*\n\n' +
   '📌 *النوع:* ' + (reqItem.type === 'person' ? 'إضافة فرد جديد' : reqItem.type === 'correction' ? 'تصحيح معلومة' : reqItem.type === 'story' ? 'قصة أو ذكرى' : 'صورة أو وثيقة') + '\n' +
@@ -5325,6 +5325,189 @@ function openEditProfileModal(node, focusField = '') {
       prayBtn.click();
     }
   };
+})();
+</script>
+
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// 🛡️ AAL-RADY DIGITAL SHIELD: ANTI-INSPECTION, ANTI-THEFT & RATE LIMITER
+// ═══════════════════════════════════════════════════════════════════════════
+(function() {
+  'use strict';
+
+  // 1. SILENCE CONSOLE & PREVENT DATA LEAKS IN PRODUCTION
+  try {
+    const noop = function() {};
+    const originalClear = console.clear || noop;
+    console.log = noop;
+    console.info = noop;
+    console.warn = noop;
+    console.debug = noop;
+  } catch (e) {}
+
+  // 2. DISABLE RIGHT-CLICK CONTEXT MENU
+  document.addEventListener('contextmenu', function(e) {
+    // Allow right click ONLY inside text input / textarea for normal pasting
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    e.preventDefault();
+    if (typeof toast === 'function') {
+      toast('🛡️ سورس كود وسجل عائلة آل راضي محمي بحقوق الملكية الفكرية');
+    }
+    return false;
+  }, { capture: true });
+
+  // 3. DISABLE F12 & DEVELOPER SHORTCUTS
+  window.addEventListener('keydown', function(e) {
+    const isCtrlOrCmd = e.ctrlKey || e.metaKey;
+    const isShift = e.shiftKey;
+    const key = (e.key || '').toUpperCase();
+    const keyCode = e.keyCode || e.which;
+
+    // F12 key
+    if (key === 'F12' || keyCode === 123) {
+      e.preventDefault();
+      e.stopPropagation();
+      showSecurityNotice();
+      return false;
+    }
+
+    // Ctrl+Shift+I (Inspect), Ctrl+Shift+J (Console), Ctrl+Shift+C (Element picker)
+    if (isCtrlOrCmd && isShift && (key === 'I' || key === 'J' || key === 'C' || keyCode === 73 || keyCode === 74 || keyCode === 67)) {
+      e.preventDefault();
+      e.stopPropagation();
+      showSecurityNotice();
+      return false;
+    }
+
+    // Ctrl+U / Cmd+U (View Source)
+    if (isCtrlOrCmd && (key === 'U' || keyCode === 85)) {
+      e.preventDefault();
+      e.stopPropagation();
+      showSecurityNotice();
+      return false;
+    }
+
+    // Ctrl+S / Cmd+S (Save Page)
+    if (isCtrlOrCmd && (key === 'S' || keyCode === 83)) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (typeof toast === 'function') {
+        toast('🛡️ حفظ السورس كود محظور لحماية بيانات النسب');
+      }
+      return false;
+    }
+  }, { capture: true });
+
+  // 4. PREVENT IMAGE & ASSET DRAGGING
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.closest('.brand-crest-svg, .p, .card')) {
+      e.preventDefault();
+      return false;
+    }
+  });
+
+  // 5. DEVTOOLS OPEN DETECTION & SECURITY OVERLAY
+  let devToolsOpen = false;
+  function showSecurityNotice() {
+    if (typeof toast === 'function') {
+      toast('🛡️ تنبيه: محتوى وبرمجيات شجرة آل راضي مسجلة ومحمية ضد النسخ');
+    }
+  }
+
+  function detectDevTools() {
+    const widthThreshold = window.outerWidth - window.innerWidth > 160;
+    const heightThreshold = window.outerHeight - window.innerHeight > 160;
+    
+    // Only flag if window is reasonably large to avoid false positives on mobile orientation change
+    if ((widthThreshold || heightThreshold) && window.outerWidth > 600 && window.outerHeight > 400) {
+      if (!devToolsOpen) {
+        devToolsOpen = true;
+        showDevToolsBanner();
+      }
+    } else {
+      if (devToolsOpen) {
+        devToolsOpen = false;
+        hideDevToolsBanner();
+      }
+    }
+  }
+
+  function showDevToolsBanner() {
+    let overlay = document.getElementById('secDevToolsOverlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'secDevToolsOverlay';
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(7,27,31,0.97);backdrop-filter:blur(12px);z-index:999999;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;direction:rtl;color:#EAF0F6;font-family:"IBM Plex Sans Arabic",sans-serif;';
+      overlay.innerHTML = `
+        <div style="max-width:480px;background:#0D3238;border:2px solid #C8A04A;border-radius:24px;padding:32px 24px;box-shadow:0 24px 60px rgba(0,0,0,0.7);">
+          <div style="font-size:3.5rem;margin-bottom:12px;">🛡️</div>
+          <h2 style="font-family:'Aref Ruqaa',serif;color:#F3E5AB;font-size:1.8rem;margin:0 0 12px;">حماية الملكية الفكرية وسجل النسب</h2>
+          <p style="font-size:0.95rem;line-height:1.6;color:#B5C9C6;margin:0 0 20px;">
+            عفواً، سورس كود ومنصة <b>سجل عائلة آل راضي</b> محمية بالكامل بموجب حقوق الملكية الفكرية. يُرجى إغلاق أدوات المطورين (F12) لمتابعة التصفح بأمان.
+          </p>
+          <button id="secDevToolsClose" style="background:linear-gradient(135deg,#C8A04A,#E6C775);color:#071B1F;border:none;padding:10px 24px;border-radius:999px;font-weight:700;font-size:1rem;cursor:pointer;">إغلاق والمتابعة</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      const closeBtn = document.getElementById('secDevToolsClose');
+      if (closeBtn) {
+        closeBtn.onclick = function() {
+          overlay.style.display = 'none';
+        };
+      }
+    } else {
+      overlay.style.display = 'flex';
+    }
+  }
+
+  function hideDevToolsBanner() {
+    const overlay = document.getElementById('secDevToolsOverlay');
+    if (overlay) overlay.style.display = 'none';
+  }
+
+  window.addEventListener('resize', detectDevTools, { passive: true });
+
+  // 6. RATE LIMITING & ANTI-CRASH PROTECTION (حماية من السقوط والسبام)
+  const RATE_LIMITS = {
+    contributionMax: 3,        // Max 3 requests
+    contributionWindowMs: 5 * 60 * 1000, // per 5 minutes
+    actionThrottleMs: 250      // 250ms throttle between heavy UI actions
+  };
+
+  let contributionHistory = [];
+  try {
+    contributionHistory = JSON.parse(sessionStorage.getItem('aal_radi_req_rate') || '[]');
+  } catch (e) {}
+
+  window.checkActionRateLimit = function(actionType) {
+    const now = Date.now();
+    if (actionType === 'contribution') {
+      // Filter out timestamps outside window
+      contributionHistory = contributionHistory.filter(t => now - t < RATE_LIMITS.contributionWindowMs);
+      if (contributionHistory.length >= RATE_LIMITS.contributionMax) {
+        const remainingSec = Math.ceil((RATE_LIMITS.contributionWindowMs - (now - contributionHistory[0])) / 1000);
+        alert('⏳ حماية من الإغراق: لقد قمت بإرسال عدة طلبات مؤخراً. يرجى الانتظار ' + Math.ceil(remainingSec / 60) + ' دقيقة قبل إرسال طلب جديد لحماية السيرفر.');
+        return false;
+      }
+      contributionHistory.push(now);
+      try {
+        sessionStorage.setItem('aal_radi_req_rate', JSON.stringify(contributionHistory));
+      } catch (e) {}
+      return true;
+    }
+    return true;
+  };
+
+  // 7. CRASH SAFEGUARD: Global error isolation to prevent page crash
+  window.addEventListener('error', function(e) {
+    // Prevent unhandled errors from breaking main event loop
+    return false;
+  });
+  window.addEventListener('unhandledrejection', function(e) {
+    // Suppress promise uncaught rejections in production
+    e.preventDefault();
+  });
 })();
 </script>
 
