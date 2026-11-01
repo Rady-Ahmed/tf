@@ -3,6 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#071B1F">
+<meta property="og:type" content="website">
+<meta property="og:title" content="سجل وشجرة نسب عائلة آل راضي | AL RADY FAMILY LEGACY">
+<meta property="og:description" content="منصة رقمية لحفظ نسب وتاريخ وذكريات عائلة آل راضي · شجرة تفاعلية · سير ذاتية · صندوق تكافل · شبكة كفاءات">
+<meta property="og:image" content="https://al-rady-legacy.vercel.app/og-image.png">
+<meta property="og:url" content="https://al-rady-legacy.vercel.app/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="سجل وشجرة نسب عائلة آل راضي">
+<meta name="twitter:description" content="منصة رقمية لحفظ نسب وتاريخ وذكريات عائلة آل راضي">
+<meta name="description" content="سجل عائلة آل راضي — منصة رقمية شاملة لحفظ النسب وتوثيق تاريخ وحكايات وذكريات العائلة عبر الأجيال. شجرة تفاعلية، سير ذاتية، مشاهدة سينمائية، صندوق تكافل، وشبكة كفاءات.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://al-rady-legacy.vercel.app/">
 <title>سجل عائلة آل راضي | شجرة النسب والذاكرة</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2881,22 +2893,22 @@ svg { overflow: visible; }
 
 /* ── Cinematic Branching Banner & Animations ── */
 .cinema-floating-banner {
-  position: absolute;
-  top: 14px;
+  position: fixed;
+  top: 80px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 150;
-  background: rgba(7, 27, 31, 0.95);
-  border: 1.5px solid #C8A04A;
-  border-radius: 16px;
-  padding: 0.75rem 1.25rem;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px rgba(200,160,74,0.25);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  z-index: 99999;
+  background: rgba(7, 27, 31, 0.97);
+  border: 2px solid #C8A04A;
+  border-radius: 18px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 16px 50px rgba(0,0,0,0.65), 0 0 30px rgba(200,160,74,0.3);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   text-align: center;
-  min-width: 290px;
-  max-width: 90vw;
-  animation: bannerFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  min-width: 310px;
+  max-width: 92vw;
+  animation: bannerFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 @keyframes bannerFadeIn {
@@ -3872,17 +3884,7 @@ svg { overflow: visible; }
   }
 }
 
-/* ── CINEMA BANNER FIXED POSITION & CONTROLS ── */
-.cinema-floating-banner {
-  position: fixed !important;
-  top: 76px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  z-index: 99999 !important;
-  background: rgba(7, 27, 31, 0.96) !important;
-  border: 1.5px solid #C8A04A !important;
-  box-shadow: 0 16px 50px rgba(0,0,0,0.6), 0 0 30px rgba(200,160,74,0.3) !important;
-}
+
 
 /* ── SECRET ADMIN FOOTER TRIGGER ── */
 .admin-secret-trigger {
@@ -4912,32 +4914,42 @@ function stopProgressiveCinema() {
 function startProgressiveCinema() {
   stopProgressiveCinema();
   isCinemaRunning = true;
-  
-  // 1. Ensure we are in tree mode
+
+  // 1. Switch to tree mode, reset focus
   mode = 'tree';
   focusN = null;
   sel = null;
-  
-  // Scroll smoothly to tree section
+
+  // 2. Scroll to tree section
   const treeEl = document.getElementById('tree');
   if (treeEl) treeEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  // 2. Start with all branches collapsed (ONLY راضي is visible!)
+  // 3. Collapse ALL branches (only root "راضي" visible)
   collapsed = new Set(ALL.filter(n => n.k && n.k.length).map(n => n.u));
   render();
   buildChips();
-  setTimeout(() => autoFitTree(false), 50);
+  setTimeout(() => autoFitTree(false), 80);
 
-  // 3. Highlight راضي at root
-  setTimeout(() => {
-    const rootEl = ht.querySelector('.root') || ht.querySelector('.p');
-    if (rootEl) {
-      rootEl.classList.add('root-gold-pulse');
-      rootEl.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+  // 4. Build ordered BFS queue: expand parent by parent from root to leaves
+  const queue = [];
+  const visited = new Set();
+  const bfs = [ALL[0]]; // root = راضي
+  while (bfs.length) {
+    const node = bfs.shift();
+    if (!node || visited.has(node.u)) continue;
+    visited.add(node.u);
+    if (node.k && node.k.length) {
+      queue.push(node); // this node has children to reveal
     }
-  }, 100);
+    for (const child of (node.k || [])) {
+      bfs.push(child);
+    }
+  }
 
-  // 4. Create floating cinematic control banner at fixed top
+  const totalSteps = queue.length;
+  const STEP_DELAY = 1200; // ms per expansion step
+
+  // 5. Create floating cinematic banner
   let banner = document.getElementById('cinBanner');
   if (!banner) {
     banner = document.createElement('div');
@@ -4946,97 +4958,103 @@ function startProgressiveCinema() {
     document.body.appendChild(banner);
   }
   banner.classList.remove('fade-out');
-  banner.innerHTML = `
-    <div class="c-title">🎬 المشاهدة السينمائية لتفرع شجرة آل راضي</div>
-    <div class="c-desc" id="cinDesc">البداية: راضي (أصل العائلة والجد الأكبر)</div>
-    <div class="c-progress"><div class="c-bar" id="cinBar" style="width: 8%"></div></div>
-    <div class="c-actions">
-      <button class="c-btn" id="cinStopBtn" type="button" onclick="stopProgressiveCinema();toast('تم إيقاف العرض')">⏹️ إيقاف</button>
-      <button class="c-btn c-gold" id="cinFastBtn" type="button" onclick="stopProgressiveCinema();collapsed.clear();render();autoFitTree(true);toast('✨ تم إظهار كل الفروع والأبناء (١١١ فرداً)')">⏭️ إظهار الكل فوراً</button>
-    </div>
-  `;
+  banner.innerHTML =
+    '<div class="c-title">\u{1F3AC} المشاهدة السينمائية لتفرع شجرة آل راضي</div>' +
+    '<div class="c-desc" id="cinDesc">البداية: راضي — أصل العائلة والجد الأكبر</div>' +
+    '<div class="c-progress"><div class="c-bar" id="cinBar" style="width:2%"></div></div>' +
+    '<div class="c-counter" id="cinCounter" style="font-size:0.78rem;color:#C8A04A;margin:0.35rem 0;">0 / ' + ALL.length + ' فرد</div>' +
+    '<div class="c-actions">' +
+      '<button class="c-btn" id="cinStopBtn2" type="button">\u23F9\uFE0F إيقاف</button>' +
+      '<button class="c-btn c-gold" id="cinFastBtn2" type="button">\u23ED\uFE0F إظهار الكل فوراً</button>' +
+    '</div>';
 
-  const cinDesc = document.getElementById('cinDesc');
-  const cinBar = document.getElementById('cinBar');
+  document.getElementById('cinStopBtn2').onclick = function() {
+    stopProgressiveCinema();
+    toast('تم إيقاف العرض السينمائي');
+  };
+  document.getElementById('cinFastBtn2').onclick = function() {
+    stopProgressiveCinema();
+    collapsed.clear();
+    render();
+    autoFitTree(true);
+    toast('\u2728 تم إظهار كل الفروع والأبناء (' + ALL.length + ' فرداً)');
+  };
 
-  const steps = [
-    {
-      delay: 1500,
-      gen: 0,
-      desc: '🌿 يتفرع الآن الجيل الأول: أبناء راضي (عبدالصمد، حمد، وقاد)',
-      progress: 20
-    },
-    {
-      delay: 3400,
-      gen: 1,
-      desc: '🌿 يتفرع الآن الجيل الثاني: أبناء عبدالصمد (علي...)',
-      progress: 35
-    },
-    {
-      delay: 5300,
-      gen: 2,
-      desc: '🌿 يتفرع الآن الجيل الثالث: أبناء علي (مرسي، حسن، عبدالصمد...)',
-      progress: 50
-    },
-    {
-      delay: 7200,
-      gen: 3,
-      desc: '🌿 يتفرع الآن الجيل الرابع: أبناء مرسي (محمد، حسن، عبدالوهاب...)',
-      progress: 65
-    },
-    {
-      delay: 9100,
-      gen: 4,
-      desc: '🌿 يتفرع الآن الجيل الخامس: فروع صلاح وعلي وزينب وعاشور',
-      progress: 80
-    },
-    {
-      delay: 11000,
-      gen: 5,
-      desc: '🌿 يتفرع الآن الجيل السادس: فروع عماد، رضا، محمود، راضي، أحمد، محمد...',
-      progress: 90
-    },
-    {
-      delay: 13000,
-      gen: 6,
-      desc: '🌿 تتفرع الأجيال الحديثة: أحفاد علي وصلاح وعاشور (تالا، تمارة، ياسين، حمادة...)',
-      progress: 100,
-      finish: true
+  // 6. Root highlight
+  setTimeout(function() {
+    const rootEl = ht.querySelector('.root') || ht.querySelector('.p');
+    if (rootEl) {
+      rootEl.classList.add('root-gold-pulse');
+      rootEl.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
     }
-  ];
+  }, 200);
 
-  steps.forEach(step => {
-    const timer = setTimeout(() => {
+  // 7. Progressive expansion: one parent at a time
+  let revealedCount = 1; // root is already visible
+
+  queue.forEach(function(parentNode, stepIdx) {
+    const delay = 1500 + stepIdx * STEP_DELAY;
+    const timer = setTimeout(function() {
       if (!isCinemaRunning) return;
-      
-      ALL.forEach(n => {
-        if (n.d <= step.gen) {
-          collapsed.delete(n.u);
-        }
-      });
-      
-      if (step.finish) {
-        collapsed.clear();
-      }
+
+      // Uncollapse this parent to show its children
+      collapsed.delete(parentNode.u);
+      revealedCount += parentNode.k.length;
 
       render();
-      autoFitTree(true);
-      
-      if (cinDesc) cinDesc.textContent = step.desc;
-      if (cinBar) cinBar.style.width = step.progress + '%';
 
-      if (step.finish) {
-        if (cinDesc) cinDesc.innerHTML = '✨ <b>اكتملت شجرة آل راضي بالكامل (١١١ فرداً في ١٠ أجيال)</b>';
-        toast('✨ اكتمل تفرع شجرة آل راضي بالكامل');
-        const rootEl = ht.querySelector('.root') || ht.querySelector('.p');
+      // Auto-fit to show the newly expanded branch
+      autoFitTree(true);
+
+      // Update banner description
+      var cinDesc = document.getElementById('cinDesc');
+      var cinBar = document.getElementById('cinBar');
+      var cinCounter = document.getElementById('cinCounter');
+
+      var childNames = parentNode.k.slice(0, 4).map(function(c) { return c.n; }).join('، ');
+      if (parentNode.k.length > 4) childNames += '، ...';
+      var pct = Math.round(((stepIdx + 1) / totalSteps) * 100);
+
+      if (cinDesc) cinDesc.textContent = '\u{1F33F} يتفرع الآن ' + parentNode.n + ' ← ' + childNames;
+      if (cinBar) cinBar.style.width = pct + '%';
+      if (cinCounter) cinCounter.textContent = Math.min(revealedCount, ALL.length) + ' / ' + ALL.length + ' فرد';
+
+      // Scroll to the expanded parent's card in the tree
+      setTimeout(function() {
+        var parentEl = ht.querySelector('[data-i="' + parentNode.id + '"]');
+        if (parentEl) {
+          parentEl.style.outline = '3px solid #F3E5AB';
+          parentEl.style.outlineOffset = '3px';
+          parentEl.style.boxShadow = '0 0 25px rgba(200,160,74,0.5)';
+          parentEl.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+          // Remove highlight after a bit
+          setTimeout(function() {
+            parentEl.style.outline = '';
+            parentEl.style.outlineOffset = '';
+            parentEl.style.boxShadow = '';
+          }, STEP_DELAY - 200);
+        }
+      }, 100);
+
+      // Final step
+      if (stepIdx === totalSteps - 1) {
+        collapsed.clear();
+        render();
+        autoFitTree(true);
+
+        if (cinDesc) cinDesc.innerHTML = '\u2728 <b>اكتملت شجرة آل راضي بالكامل (' + ALL.length + ' فرداً في ' + (MAXD + 1) + ' أجيال)</b>';
+        if (cinCounter) cinCounter.textContent = ALL.length + ' / ' + ALL.length + ' فرد ✓';
+        toast('\u2728 اكتمل تفرع شجرة آل راضي بالكامل');
+
+        var rootEl = ht.querySelector('.root') || ht.querySelector('.p');
         if (rootEl) rootEl.classList.remove('root-gold-pulse');
 
-        const closeTimer = setTimeout(() => {
+        var closeTimer = setTimeout(function() {
           stopProgressiveCinema();
-        }, 5000);
+        }, 6000);
         progressiveCinemaTimers.push(closeTimer);
       }
-    }, step.delay);
+    }, delay);
 
     progressiveCinemaTimers.push(timer);
   });
