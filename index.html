@@ -804,7 +804,16 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
     <span class="msh-text" id="mshText">تمرير الصفحة بإصبع واحد · تحريك الشجرة بإصبعين</span>
     <button type="button" class="msh-toggle" id="btnToggleMapLock">🔓 تفعيل سحب الشجرة</button>
   </div>
-  <div class="scroller mobile-page-scroll-mode" style="touch-action:pan-y pinch-zoom" id="scr"><div id="netControls" aria-label="فلترة شبكة العائلة"></div><svg id="svg" role="group" aria-label="شجرة العائلة"></svg><div class="nt" id="htree"></div><div id="gens"></div></div>
+  <div class="scroller mobile-page-scroll-mode" style="touch-action:pan-y pinch-zoom" id="scr">
+
+  <div class="tree-mob-fab" id="treeMobFab" aria-label="أدوات الشجرة للموبايل">
+    <button type="button" class="tmf-btn tmf-root" id="tmfRoot" title="شجرة الأصل">🏛️ الأصل</button>
+    <button type="button" class="tmf-btn tmf-fit" id="tmfFit" title="ملاءمة وتوسيط">🎯 ملاءمة</button>
+    <button type="button" class="tmf-btn" id="tmfZin" title="تكبير">➕</button>
+    <button type="button" class="tmf-btn" id="tmfZout" title="تصغير">➖</button>
+    <button type="button" class="tmf-btn tmf-fs" id="tmfFs" title="ملء الشاشة">⛶ كاملة</button>
+  </div>
+<div id="netControls" aria-label="فلترة شبكة العائلة"></div><svg id="svg" role="group" aria-label="شجرة العائلة"></svg><div class="nt" id="htree"></div><div id="gens"></div></div>
   <div id="cards" hidden></div>
   <div class="panel" id="panel" aria-live="polite"><p class="mt">اختر فردًا من الشجرة لتعرف نسبه وصلته بك.</p></div>
 </section>
@@ -816,6 +825,7 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
   <div class="car" id="car">
     <svg class="ring-bg" viewBox="-100 -100 200 200" aria-hidden="true"><g fill="none" stroke="#C9A24B" stroke-width=".8"><rect x="-70" y="-70" width="140" height="140"/><rect x="-70" y="-70" width="140" height="140" transform="rotate(45)"/><circle r="96"/><circle r="60" stroke-dasharray="2 4"/></g></svg>
     <div class="stage" id="stg"><div class="ring3" id="r3"></div></div>
+    <div class="ring-dots-wrap" id="ringDots" aria-label="مؤشرات أفراد الدوامة"></div>
     <div class="cap" id="cap" aria-live="polite"></div>
     <div class="cbtn"><button class="go o" id="cprev" aria-label="السابق">→</button><button class="go o" id="cnext" aria-label="التالي">←</button></div>
   </div></section>
@@ -1654,14 +1664,58 @@ pcard.addEventListener('change',e=>{if(e.target.type!=='file'||!e.target.files[0
       <div class="cd-b">${BACK}</div></div></div>`).join('');
   }
   function layout(){
-    const cw=innerWidth<640?150:190,ch=Math.round(cw*1.5),R=Math.round((cw/2)/Math.tan(Math.PI/N))+34;
-    car.style.setProperty('--cw',cw+'px');car.style.setProperty('--ch',ch+'px');car.dataset.R=R;stg.style.height=Math.round(ch*1.45)+'px';
-    [...r3.children].forEach((c,i)=>c.style.transform=`rotateY(${i*step}deg) translateZ(${R}px)`);
+    const isMob = innerWidth < 600;
+    const isTiny = innerWidth < 380;
+    // Perfect sizing on phones to prevent horizontal cut-off
+    const cw = isTiny ? 122 : (isMob ? 136 : 190);
+    const ch = Math.round(cw * 1.48);
+    const R = Math.round((cw / 2) / Math.tan(Math.PI / N)) + (isMob ? 16 : 34);
+    car.style.setProperty('--cw', cw + 'px');
+    car.style.setProperty('--ch', ch + 'px');
+    car.dataset.R = R;
+    stg.style.height = Math.round(ch * (isMob ? 1.58 : 1.45)) + 'px';
+    [...r3.children].forEach((c, i) => c.style.transform = `rotateY(${i * step}deg) translateZ(${R}px)`);
+    renderRingDots();
+  }
+
+  function renderRingDots() {
+    const dotsWrap = document.getElementById('ringDots');
+    if (!dotsWrap) return;
+    dotsWrap.innerHTML = LIST.map((n, i) => `<span class="ring-dot${i === front ? ' active' : ''}" data-dot="${i}" title="${n.n}"></span>`).join('');
+    dotsWrap.querySelectorAll('.ring-dot').forEach(dot => {
+      dot.onclick = () => snap(+dot.dataset.dot);
+    });
+  }
+
+  function updateRingDots(activeIndex) {
+    const dotsWrap = document.getElementById('ringDots');
+    if (!dotsWrap) return;
+    dotsWrap.querySelectorAll('.ring-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === activeIndex);
+    });
   }
   function setFront(){
-    [...r3.children].forEach((c,i)=>c.classList.toggle('front',i===front));
-    const n=LIST[front];cap.setAttribute('style',pcs(n));
-    cap.innerHTML=`<b class="disp">${n.n}</b><span>${n.sf}، ${n.y}</span><button class="go o" data-open="${n.id}">افتح البطاقة</button>`;
+    [...r3.children].forEach((c, i) => c.classList.toggle('front', i === front));
+    const n = LIST[front];
+    if (!n) return;
+    const pc = typeof getProfCat === 'function' ? getProfCat(n) : null;
+    cap.setAttribute('style', pcs(n));
+    cap.innerHTML = `
+      <div class="cap-badge-line">
+        ${pc ? `<span class="cap-prof-pill">${pc.icon} ${pc.name}</span>` : ''}
+        <span class="cap-gen-pill">${(typeof GEN !== 'undefined' && GEN[n.d]) ? GEN[n.d] : 'آل راضي'}</span>
+      </div>
+      <b class="disp cap-title">${n.n}</b>
+      <div class="cap-meta">
+        <span>${n.sf || ''}</span>
+        ${n.y ? `<span class="cap-sep">·</span><span>${n.y}</span>` : ''}
+        ${n.p ? `<span class="cap-sep">·</span><span>ابن ${n.p.n}</span>` : ''}
+      </div>
+      <div class="cap-actions">
+        <button class="go o cap-open-btn" data-open="${n.id}">افتح السيرة والملف الكامل ↗</button>
+      </div>
+    `;
+    updateRingDots(front);
   }
   const snap=i=>{const b=-i*step;tgt=b+360*Math.round((rot-b)/360)};
   function frame(){
@@ -3992,6 +4046,254 @@ svg { overflow: visible; }
   }
 }
 
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   📱 MOBILE SUPER UI/UX: TREE & DOWAMA CAROUSEL ENHANCEMENTS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── TREE MOBILE TOOLBAR & VIEW TABS ── */
+@media (max-width: 768px) {
+  .tools {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 0.5rem !important;
+    padding: 0.5rem 0.25rem 0.75rem !important;
+    scrollbar-width: none !important;
+  }
+  .tools::-webkit-scrollbar { display: none !important; }
+  
+  .tools .srch {
+    flex: 0 0 190px !important;
+    min-width: 190px !important;
+  }
+  .tools .tb {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    min-height: 42px !important;
+    padding: 0.45rem 0.95rem !important;
+    font-size: 0.85rem !important;
+    border-radius: 999px !important;
+    background: rgba(255,255,255,0.06) !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+  }
+  .tools .tb:active {
+    transform: scale(0.94) !important;
+  }
+
+  .tabs {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding: 0.35rem !important;
+    gap: 0.3rem !important;
+    border-radius: 999px !important;
+    background: rgba(7, 27, 31, 0.85) !important;
+    border: 1px solid var(--line) !important;
+  }
+  .tabs::-webkit-scrollbar { display: none !important; }
+  .tabs button {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    font-size: 0.82rem !important;
+    padding: 0.42rem 0.85rem !important;
+    border-radius: 999px !important;
+  }
+
+  /* Tree container relative positioning for FAB */
+  .scroller {
+    position: relative !important;
+    min-height: 460px !important;
+    border-radius: 20px !important;
+  }
+
+  /* Tree Node touch optimization */
+  .nt .p {
+    min-height: 46px !important;
+    padding: 0.35rem 0.75rem !important;
+  }
+  .nt .p:active {
+    transform: scale(0.94) !important;
+  }
+  .bdg {
+    min-height: 36px !important;
+    padding: 0.35rem 0.85rem !important;
+    font-size: 0.84rem !important;
+  }
+}
+
+/* ── TREE MOBILE FLOATING ACTION CLUSTER (FAB) ── */
+.tree-mob-fab {
+  display: none;
+}
+@media (max-width: 768px) {
+  .tree-mob-fab {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    z-index: 80;
+    gap: 6px;
+    background: rgba(7, 27, 31, 0.95);
+    border: 1.5px solid var(--gold);
+    border-radius: 999px;
+    padding: 4px 6px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 15px rgba(200,160,74,0.25);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .tree-mob-fab .tmf-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 999px;
+    color: #EAF0F6;
+    font-size: 0.8rem;
+    font-weight: 700;
+    height: 36px;
+    padding: 0 10px;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.15s;
+    user-select: none;
+  }
+  .tree-mob-fab .tmf-btn:active {
+    transform: scale(0.9);
+    background: var(--gold);
+    color: #071B1F;
+  }
+  .tree-mob-fab .tmf-btn.tmf-fs {
+    background: linear-gradient(135deg, #C8A04A, #F3E5AB);
+    color: #071B1F;
+    border: none;
+    font-weight: 800;
+    box-shadow: 0 0 10px rgba(200,160,74,0.4);
+  }
+}
+
+/* ── DOWAMA (3D RING) MOBILE SUPER STYLING ── */
+.ring-dots-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin: 1rem auto 0.5rem;
+  max-width: 90vw;
+  overflow-x: auto;
+  padding: 4px;
+}
+.ring-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(200,160,74,0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+.ring-dot.active {
+  width: 24px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #C8A04A, #F3E5AB);
+  box-shadow: 0 0 10px rgba(200,160,74,0.8);
+}
+
+/* Caption card below 3D ring */
+.cap {
+  margin-top: 1.25rem !important;
+  background: rgba(7, 27, 31, 0.95) !important;
+  border: 1.5px solid var(--gold) !important;
+  border-radius: 20px !important;
+  padding: 1.2rem 1.5rem !important;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.5), 0 0 20px rgba(200,160,74,0.2) !important;
+  backdrop-filter: blur(14px) !important;
+  text-align: center !important;
+  max-width: min(540px, 94vw) !important;
+  margin-inline: auto !important;
+  animation: capFadeIn 0.35s ease !important;
+}
+@keyframes capFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.cap .cap-badge-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 0.4rem;
+}
+.cap .cap-prof-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(200, 160, 74, 0.2);
+  border: 1px solid #C8A04A;
+  color: #F3E5AB;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.cap .cap-gen-pill {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #B5C9C6;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.76rem;
+}
+.cap .cap-title {
+  font-size: clamp(1.8rem, 5.5vw, 2.5rem) !important;
+  color: #F3E5AB !important;
+  margin: 0.2rem 0 !important;
+}
+.cap .cap-meta {
+  font-size: 0.88rem !important;
+  color: #EAF0F6 !important;
+  margin: 0.3rem 0 0.85rem !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.cap .cap-sep {
+  color: var(--gold);
+  opacity: 0.6;
+}
+.cap .cap-open-btn {
+  width: 100% !important;
+  max-width: 340px !important;
+  padding: 0.75rem 1.4rem !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  background: linear-gradient(135deg, #C8A04A, #F3E5AB) !important;
+  color: #071B1F !important;
+  border: none !important;
+  border-radius: 999px !important;
+  box-shadow: 0 4px 18px rgba(200,160,74,0.35) !important;
+  cursor: pointer !important;
+  transition: transform 0.2s, box-shadow 0.2s !important;
+}
+.cap .cap-open-btn:active {
+  transform: scale(0.96) !important;
+}
+
+@media (max-width: 600px) {
+  .car .stage {
+    min-height: 330px !important;
+    perspective: 1100px !important;
+  }
+}
+
 /* ── ALL GENERATION NAMES GRID & CARDS STYLING ── */
 .card {
   grid-template-columns: 1fr 1.35fr !important;
@@ -5747,6 +6049,48 @@ function openEditProfileModal(node, focusField = '') {
       toast('🔒 تم تثبيت التمرير السلس للصفحة');
     }
   };
+})();
+</script>
+
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// 📱 TREE MOBILE FLOATING CONTROLS EVENT HANDLERS
+// ═══════════════════════════════════════════════════════════════════════════
+(function() {
+  function hookFab() {
+    const tmfRoot = document.getElementById('tmfRoot');
+    const tmfFit = document.getElementById('tmfFit');
+    const tmfZin = document.getElementById('tmfZin');
+    const tmfZout = document.getElementById('tmfZout');
+    const tmfFs = document.getElementById('tmfFs');
+
+    if (tmfRoot) tmfRoot.onclick = () => {
+      if (typeof resetToOriginalView === 'function') resetToOriginalView();
+      if (typeof toast === 'function') toast('🏛️ تم التوسيط على راضي (أصل الشجرة)');
+    };
+    if (tmfFit) tmfFit.onclick = () => {
+      if (typeof autoFitTree === 'function') autoFitTree(true);
+      if (typeof toast === 'function') toast('🎯 تمت ملاءمة الشجرة مع شاشة الهاتف');
+    };
+    if (tmfZin) tmfZin.onclick = () => {
+      const zin = document.getElementById('zin');
+      if (zin) zin.click();
+    };
+    if (tmfZout) tmfZout.onclick = () => {
+      const zout = document.getElementById('zout');
+      if (zout) zout.click();
+    };
+    if (tmfFs) tmfFs.onclick = () => {
+      const mapOpen = document.getElementById('mapOpen');
+      if (mapOpen) mapOpen.click();
+    };
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', hookFab);
+  } else {
+    hookFab();
+  }
 })();
 </script>
 
