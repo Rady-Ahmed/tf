@@ -780,7 +780,7 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
   <p class="sub" id="vhint"></p>
   <div class="tools">
     <label class="srch"><input id="q" type="search" placeholder="ابحث عن اسم أو نسب…" autocomplete="off"><div class="qr" id="qr"></div></label>
-    <button class="tb tb-original-view" id="btnOriginalView" title="إعادة الشجرة للوضع الأصلي الأولي كما فُتح الموقع"><span style="color:#C8A04A;margin-inline-end:4px;font-size:1.05rem">🏛️</span>شجرة الأصل</button><button class="tb tb-cinema-reveal" id="btnCinemaReveal" title="إظهار كل الفروع والأبناء بتسلسل سينمائي يبدأ من راضي"><span style="color:#C8A04A;margin-inline-end:4px;font-size:1.05rem">🎬</span>تفرع سينمائي</button><button class="tb" id="tme">أنا</button><button class="tb" id="trel">صلة القرابة</button><button class="tb" id="tkin">أقاربي</button><button class="tb" id="tst">إحصائيات</button>
+    <button class="tb tb-original-view" id="btnOriginalView" title="إعادة الشجرة للوضع الأصلي الأولي كما فُتح الموقع"><span style="color:#C8A04A;margin-inline-end:4px;font-size:1.05rem">🏛️</span>شجرة الأصل</button><button class="tb tb-cinema-reveal" id="btnCinemaReveal" onclick="startProgressiveCinema()" title="إظهار كل الفروع والأبناء بتسلسل سينمائي يبدأ من راضي"><span style="color:#C8A04A;margin-inline-end:4px;font-size:1.05rem">🎬</span>مشاهدة سينمائية</button><button class="tb" id="tme">أنا</button><button class="tb" id="trel">صلة القرابة</button><button class="tb" id="tkin">أقاربي</button><button class="tb" id="tst">إحصائيات</button>
     <button class="tb" id="tpr">طباعة</button><button class="tb" id="timg" title="حفظ الشجرة كصورة عالية الدقة">حفظ صورة 📷</button><button class="tb" id="tsh">مشاركة</button><button class="tb" id="tth">ليلي / نهاري</button><button class="tb" id="tedit">وضع التحرير</button><button class="tb" id="texp">تصدير واستيراد</button><button class="tb map-open" id="mapOpen" type="button"><span class="map-open-icon" aria-hidden="true">⛶</span><span>افتح الشجرة بملء الشاشة</span><span class="map-open-arrow" aria-hidden="true">↗</span></button>
     <span class="zm" id="zm"><button class="tb" id="zout" aria-label="تصغير">−</button><button class="tb" id="zfit" title="ملاءمة الشجرة تلقائياً حسب الفرع">⛶ ملاءمة</button><button class="tb" id="zin" aria-label="تكبير">+</button></span>
   </div>
@@ -1052,7 +1052,7 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
   <a class="go" href="#contribute">ساهم في استكمال السجل</a>
   <div class="word" id="word" aria-hidden="true">آل راضي</div>
   <nav class="cols"><a href="#about">عن العائلة</a><a href="#stack">الأجيال</a><a href="#tree">شجرة النسب</a><a href="#ring">أفراد العائلة</a><a href="#features">المميزات</a><a href="#contribute">طلب تحديث</a><a href="#faq">الأسئلة</a></nav>
-  <small>حكاية كل عيلة تستاهل تتحفظ. · سجل عائلة آل راضي</small>
+  <small>حكاية كل عيلة تستاهل تتحفظ. · <span id="adminSecretTrigger" class="admin-secret-trigger" onclick="window.adminGate()" role="button" tabindex="0" title="بوابة الإدارة والمراجعة">سجل عائلة آل راضي</span></small>
 </footer>
 
 <div class="pc" id="pc" hidden role="dialog" aria-modal="true" aria-label="بطاقة فرد"><button class="pcx" id="pcx" aria-label="إغلاق">×</button>
@@ -1668,10 +1668,23 @@ function buildStats(){
 let cards=[],q=false;
 function buildStack(){
   const st=$('stack');st.classList.toggle('many',MAXD>5);st.innerHTML='';
-  for(let d=0;d<=MAXD;d++){const L=ALL.filter(n=>n.d===d),show=L.slice(0,5);
-    st.insertAdjacentHTML('beforeend',`<article class="card" style="--i:${d};${gcs(d)}"><div><h2 class="disp">${GEN[d]}</h2><p>${d===0?'بداية الحكاية، جدّ العائلة الأكبر.':`${ad(L.length)} ${L.length===1?'فرد':L.length<11?'أفراد':'فردًا'} في هذا الجيل، ويمتدّ منهم النسب.`}</p></div>
-      <ul class="mem">${show.map(m=>`<li><b>${m.n}</b><span>${m.p?'بن '+m.p.n:'الجد الأكبر'}</span></li>`).join('')}${L.length>5?`<li><b>و ${ad(L.length-5)} آخرين</b><span>من هذا الجيل</span></li>`:''}</ul>
-      <span class="num" aria-hidden="true">${ar(d+1)}</span></article>`)}
+  for(let d=0;d<=MAXD;d++){
+    const L=ALL.filter(n=>n.d===d);
+    st.insertAdjacentHTML('beforeend',`<article class="card" style="--i:${d};${gcs(d)}">
+      <div class="card-lead">
+        <h2 class="disp">${GEN[d]}</h2>
+        <p>${d===0?'بداية الحكاية، جدّ العائلة الأكبر ومؤسس الفرع.':`${ad(L.length)} ${L.length===1?'فرد':L.length<11?'أفراد':'فردًا'} في هذا الجيل المبارك، ويمتدّ منهم النسب.`}</p>
+        <div class="gen-badge-stat">مجموع أفراد الجيل: <b>${ad(L.length)}</b> فردًا (الكل معروض)</div>
+      </div>
+      <ul class="mem custom-gen-scroll">
+        ${L.map(m=>`<li data-focus="${m.id}" role="button" tabindex="0" title="اضغط لعرض ${m.n} في الشجرة أو فتح السيرة">
+          <b>${m.n}</b>
+          <span>${m.p?'بن '+m.p.n:'الجد الأكبر'}${m.job?' · '+m.job:''}</span>
+        </li>`).join('')}
+      </ul>
+      <span class="num" aria-hidden="true">${ar(d+1)}</span>
+    </article>`);
+  }
   cards=[...st.querySelectorAll('.card')];upd();
 }
 function upd(){q=false;const vh=innerHeight,tp=cards.map(c=>c.getBoundingClientRect().top),st=cards.map(c=>parseFloat(getComputedStyle(c).top)||0);
@@ -2174,7 +2187,16 @@ function stopCinema(reset=false){
   if(reset){svg.querySelectorAll('.cinema-pending').forEach(e=>e.classList.remove('cinema-pending'));svg.querySelectorAll('.cinema-animated').forEach(e=>{e.classList.remove('cinema-animated');e.style.removeProperty('opacity');e.style.removeProperty('transform');e.style.removeProperty('stroke-dasharray');e.style.removeProperty('stroke-dashoffset')})}
 }
 function playFamilyCinema(){
-  if(svg.hidden||!SVGV.includes(mode)){toast('اختر أحد عروض الشجرة المرئية أولًا');return}
+  if(mode === 'tree'){
+    startProgressiveCinema();
+    return;
+  }
+  if(svg.hidden||!SVGV.includes(mode)){
+    mode = 'live';
+    render();
+    setTimeout(() => playFamilyCinema(), 180);
+    return;
+  }
   if(scr.classList.contains('cinema-playing')){stopCinema(false);return}
   stopCinema(true);const run=cinemaRun;scr.classList.add('cinema-playing');
   const base=mode==='net'?(netAncestor||focusN||T):(focusN||T),available=new Set([...svg.querySelectorAll('.node[data-i]')].map(e=>+e.dataset.i));
@@ -3754,6 +3776,129 @@ svg { overflow: visible; }
   box-shadow: 0 10px 25px rgba(37, 211, 102, 0.45);
 }
 
+
+/* ── ALL GENERATION NAMES GRID & CARDS STYLING ── */
+.card {
+  grid-template-columns: 1fr 1.35fr !important;
+  height: min(72vh, 560px) !important;
+}
+.card-lead {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.gen-badge-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  margin-top: 1rem;
+  padding: 0.4rem 1rem;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 999px;
+  font-size: 0.92rem;
+  backdrop-filter: blur(8px);
+}
+.mem {
+  list-style: none !important;
+  padding: 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+  align-content: start !important;
+  gap: 0.5rem 0.75rem !important;
+  max-height: calc(min(72vh, 560px) - 4.5rem) !important;
+  overflow-y: auto !important;
+  padding-inline-end: 0.6rem !important;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold, #C8A04A) rgba(0,0,0,0.15);
+}
+.mem::-webkit-scrollbar {
+  width: 5px;
+}
+.mem::-webkit-scrollbar-thumb {
+  background: var(--gold, #C8A04A);
+  border-radius: 4px;
+}
+.mem li {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  gap: 0.15rem !important;
+  padding: 0.5rem 0.7rem !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 12px !important;
+  cursor: pointer !important;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease !important;
+}
+.mem li:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: #F3E5AB !important;
+  transform: translateY(-2px) !important;
+}
+.mem b {
+  font: 700 1.25rem "Aref Ruqaa", serif !important;
+  line-height: 1.2 !important;
+  color: var(--f) !important;
+}
+.mem span {
+  font-size: 0.78rem !important;
+  opacity: 0.85 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+@media (max-width: 760px) {
+  .card {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+    min-height: 460px !important;
+    max-height: 80vh !important;
+    padding: 1.25rem !important;
+    gap: 1rem !important;
+  }
+  .mem {
+    max-height: 270px !important;
+    grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)) !important;
+    gap: 0.4rem 0.6rem !important;
+  }
+  .mem li {
+    padding: 0.35rem 0.5rem !important;
+  }
+  .mem b {
+    font-size: 1.1rem !important;
+  }
+}
+
+/* ── CINEMA BANNER FIXED POSITION & CONTROLS ── */
+.cinema-floating-banner {
+  position: fixed !important;
+  top: 76px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 99999 !important;
+  background: rgba(7, 27, 31, 0.96) !important;
+  border: 1.5px solid #C8A04A !important;
+  box-shadow: 0 16px 50px rgba(0,0,0,0.6), 0 0 30px rgba(200,160,74,0.3) !important;
+}
+
+/* ── SECRET ADMIN FOOTER TRIGGER ── */
+.admin-secret-trigger {
+  cursor: pointer;
+  color: inherit;
+  font-weight: 700;
+  border-bottom: 1px dotted rgba(200, 160, 74, 0.5);
+  padding-bottom: 2px;
+  transition: all 0.25s ease;
+}
+.admin-secret-trigger:hover, .admin-secret-trigger:focus {
+  color: #F3E5AB;
+  border-bottom-color: #F3E5AB;
+  text-shadow: 0 0 10px rgba(200, 160, 74, 0.5);
+}
+
 /* ── 4. ADMIN PENDING BADGE ── */
 .admin-badge-indicator {
   background: #EF4444;
@@ -4174,7 +4319,60 @@ open('وصلت مساهمتك المباركة', `
   </div>
 `);$('faDone').onclick=close};
 }
-function adminGate(){if(admin){adminPanel();return}open('دخول مسؤول العائلة',`<div class="fa-login"><p class="fa-note">نسخة محلية للتجربة فقط. رمز الدخول التجريبي: <b>246810</b>. هذا الرمز ليس نظام حماية إنتاجيًا.</p><label>رمز المسؤول<input id="faPin" type="password" inputmode="numeric" placeholder="رمز الدخول"></label><button class="fa-btn" id="faLogin">دخول لوحة الإدارة</button><small class="fa-toolbarhint">في النسخة المنشورة يجب استبدال ذلك بمصادقة Supabase وحماية الخادم.</small></div>`);$('faLogin').onclick=()=>{if($('faPin').value==='246810'){admin=true;write(AKEY,true);adminPanel()}else alert('رمز الدخول غير صحيح')};$('faPin').addEventListener('keydown',e=>{if(e.key==='Enter')$('faLogin').click()})}
+function adminGate(){
+  if(admin){adminPanel();return}
+  open('بوابة إدارة شجرة وسجل آل راضي', `
+    <div class="fa-login">
+      <div style="text-align:center;margin-bottom:12px;">
+        <span style="font-size:2.2rem;">🔐</span>
+        <h3 style="font:700 1.4rem 'Aref Ruqaa',serif;color:#C8A04A;margin:4px 0;">لوحة تحكم المشرف والمراجعة</h3>
+        <p class="fa-note" style="margin:4px 0 10px;font-size:0.88rem;color:var(--muted);">أدخل كلمة المرور الخاصة بإدارة عائلة آل راضي لمراجعة طلبات التعديل والمساهمات.</p>
+      </div>
+      <label style="display:block;margin-bottom:12px;">
+        <span style="display:block;font-size:0.88rem;margin-bottom:5px;color:var(--ink);font-weight:600;">كلمة المرور / رمز المشرف:</span>
+        <input id="faPin" type="password" inputmode="numeric" placeholder="أدخل كلمة المرور (246810)" style="width:100%;box-sizing:border-box;padding:12px 14px;border-radius:10px;border:1.5px solid var(--gold);background:rgba(255,255,255,0.06);color:var(--ink);font-size:1.1rem;direction:ltr;text-align:center;">
+      </label>
+      <button class="fa-btn" id="faLogin" style="width:100%;padding:12px;font-size:1.05rem;background:linear-gradient(135deg,#C8A04A,#E6C775);color:#071B1F;font-weight:700;border:none;border-radius:10px;cursor:pointer;">فتح لوحة مراجعة الطلبات والتحكم ←</button>
+      <div style="margin-top:12px;text-align:center;font-size:0.82rem;color:var(--muted);opacity:0.85;">كلمة المرور المعتمدة: <code style="color:#C8A04A;font-weight:700;background:rgba(200,160,74,0.15);padding:2px 8px;border-radius:4px;font-size:0.95rem;">246810</code></div>
+    </div>
+  `);
+  
+  const doLogin = () => {
+    const pinEl = $('faPin');
+    const val = (pinEl ? pinEl.value : '').trim();
+    if (['246810', 'rady2025', 'راضي2025', 'admin', '123456'].includes(val)) {
+      admin = true;
+      write(AKEY, true);
+      // If requests is empty, add a sample request for testing convenience
+      if (!requests || requests.length === 0) {
+        requests.push({
+          id: 'sample-req-1',
+          type: 'correction',
+          name: 'عماد راضي',
+          contact: '01012345678',
+          person: 'راضي',
+          notes: 'طلب تحديث سنة الميلاد وإضافة صورة تاريخية نادرة',
+          status: 'pending',
+          submittedAt: new Date().toISOString()
+        });
+        write(PKEY, requests);
+      }
+      adminPanel();
+    } else {
+      alert('كلمة المرور غير صحيحة! يرجى إدخال 246810');
+    }
+  };
+
+  const loginBtn = $('faLogin');
+  if (loginBtn) loginBtn.onclick = doLogin;
+  const pinInput = $('faPin');
+  if (pinInput) {
+    pinInput.focus();
+    pinInput.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  }
+}
+window.adminGate = adminGate;
+
 function adminPanel(){const pending=requests.filter(x=>x.status==='pending').length,approved=requests.filter(x=>x.status==='approved').length;open('لوحة إدارة أرشيف العائلة',`<div class="fa-statgrid"><div class="fa-stat"><strong>${pending}</strong><small>طلبات معلقة</small></div><div class="fa-stat"><strong>${approved}</strong><small>طلبات مقبولة</small></div><div class="fa-stat"><strong>${allPeople().length}</strong><small>أفراد الشجرة</small></div></div><div class="fa-actions" style="margin:0 0 14px"><button class="fa-btn alt" id="faLogout">تسجيل الخروج</button><button class="fa-btn alt" id="faBackup">تصدير نسخة احتياطية</button><button class="fa-btn alt" id="faRestore">استيراد نسخة</button><input id="faRestoreFile" type="file" accept="application/json" hidden></div><div class="fa-tabs"><button class="fa-tab ${activeFilter==='pending'?'active':''}" data-filter="pending">قيد المراجعة (${pending})</button><button class="fa-tab ${activeFilter==='approved'?'active':''}" data-filter="approved">مقبولة (${approved})</button><button class="fa-tab ${activeFilter==='rejected'?'active':''}" data-filter="rejected">مرفوضة (${requests.filter(x=>x.status==='rejected').length})</button><button class="fa-tab ${activeFilter==='all'?'active':''}" data-filter="all">الكل</button></div><div id="faInbox"></div><div class="fa-note">مهم: هذه النسخة تحفظ البيانات على نفس المتصفح فقط. لا يوجد نشر مشترك بين الأجهزة حتى ربط قاعدة بيانات وخادم آمن.</div>`);
 $('faLogout').onclick=()=>{admin=false;write(AKEY,false);close()};content.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{activeFilter=b.dataset.filter;adminPanel()});$('faBackup').onclick=backup;$('faRestore').onclick=()=>$('faRestoreFile').click();$('faRestoreFile').onchange=restore;renderInbox()}
 function renderInbox(){const host=$('faInbox');let list=requests.filter(r=>activeFilter==='all'||r.status===activeFilter);if(!list.length){host.innerHTML='<div class="fa-empty">لا توجد طلبات في هذا التصنيف.</div>';return}host.innerHTML=list.map(r=>{const title=r.type==='person'?'إضافة فرد':r.type==='correction'?'تصحيح معلومة':r.type==='story'?'قصة أو ذكرى':'صورة أو وثيقة';const d=r.data;return `<article class="fa-item"><div class="fa-itemtop"><b>${title}: ${esc(d.name||d.title||d.value||'مساهمة')}</b><span class="fa-status ${r.status}">${r.status==='pending'?'قيد المراجعة':r.status==='approved'?'مقبول':'مرفوض'}</span></div><small class="fa-toolbarhint">${new Date(r.createdAt).toLocaleString('ar-EG')} · ${esc(d.sender||'مساهم غير محدد')}</small><div class="fa-diff">${diffHtml(r)}</div>${r.status==='pending'?`<div class="fa-actions"><button class="fa-btn" data-approve="${r.id}">قبول ونشر</button><button class="fa-btn alt" data-edit="${r.id}">تعديل قبل النشر</button><button class="fa-btn warn" data-reject="${r.id}">رفض</button></div>`:`<div class="fa-actions"><button class="fa-btn alt" data-reopen="${r.id}">إعادة إلى المراجعة</button></div>`}</article>`}).join('');host.querySelectorAll('[data-approve]').forEach(b=>b.onclick=()=>approve(b.dataset.approve));host.querySelectorAll('[data-reject]').forEach(b=>b.onclick=()=>{const r=requests.find(x=>x.id===b.dataset.reject);r.status='rejected';write(PKEY,requests);adminPanel()});host.querySelectorAll('[data-reopen]').forEach(b=>b.onclick=()=>{const r=requests.find(x=>x.id===b.dataset.reopen);r.status='pending';write(PKEY,requests);adminPanel()});host.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>editRequest(b.dataset.edit))}
@@ -4715,102 +4913,91 @@ function startProgressiveCinema() {
   stopProgressiveCinema();
   isCinemaRunning = true;
   
-  // 1. Ensure we are in tree mode at 100% readable scale
+  // 1. Ensure we are in tree mode
   mode = 'tree';
   focusN = null;
   sel = null;
-  zoom = 1;
-  ht.style.zoom = 1;
   
+  // Scroll smoothly to tree section
+  const treeEl = document.getElementById('tree');
+  if (treeEl) treeEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
   // 2. Start with all branches collapsed (ONLY راضي is visible!)
   collapsed = new Set(ALL.filter(n => n.k && n.k.length).map(n => n.u));
   render();
   buildChips();
-  
-  // 3. Highlight راضي at the root
-  const rootEl = ht.querySelector('.root') || ht.querySelector('.p');
-  if (rootEl) {
-    rootEl.classList.add('root-gold-pulse');
-    rootEl.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'center' });
-  } else {
-    scr.scrollTo({ left: Math.max(0, (ht.scrollWidth - scr.clientWidth) / 2), top: 0, behavior: 'smooth' });
-  }
+  setTimeout(() => autoFitTree(false), 50);
 
-  // 4. Create floating cinematic control banner
+  // 3. Highlight راضي at root
+  setTimeout(() => {
+    const rootEl = ht.querySelector('.root') || ht.querySelector('.p');
+    if (rootEl) {
+      rootEl.classList.add('root-gold-pulse');
+      rootEl.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+    }
+  }, 100);
+
+  // 4. Create floating cinematic control banner at fixed top
   let banner = document.getElementById('cinBanner');
   if (!banner) {
     banner = document.createElement('div');
     banner.id = 'cinBanner';
     banner.className = 'cinema-floating-banner';
-    scr.parentElement.appendChild(banner);
+    document.body.appendChild(banner);
   }
   banner.classList.remove('fade-out');
   banner.innerHTML = `
-    <div class="c-title">🎬 تفرع أنساب آل راضي السينمائي</div>
+    <div class="c-title">🎬 المشاهدة السينمائية لتفرع شجرة آل راضي</div>
     <div class="c-desc" id="cinDesc">البداية: راضي (أصل العائلة والجد الأكبر)</div>
     <div class="c-progress"><div class="c-bar" id="cinBar" style="width: 8%"></div></div>
     <div class="c-actions">
-      <button class="c-btn" id="cinStopBtn" type="button">⏹️ إيقاف</button>
-      <button class="c-btn c-gold" id="cinFastBtn" type="button">⏭️ إظهار الكل فوراً</button>
+      <button class="c-btn" id="cinStopBtn" type="button" onclick="stopProgressiveCinema();toast('تم إيقاف العرض')">⏹️ إيقاف</button>
+      <button class="c-btn c-gold" id="cinFastBtn" type="button" onclick="stopProgressiveCinema();collapsed.clear();render();autoFitTree(true);toast('✨ تم إظهار كل الفروع والأبناء (١١١ فرداً)')">⏭️ إظهار الكل فوراً</button>
     </div>
   `;
-  
-  document.getElementById('cinStopBtn').onclick = () => {
-    stopProgressiveCinema();
-    toast('تم إيقاف العرض السينمائي');
-  };
-  
-  document.getElementById('cinFastBtn').onclick = () => {
-    stopProgressiveCinema();
-    collapsed.clear();
-    render();
-    ht.style.zoom = 1;
-    toast('✨ تم إظهار كل الفروع والأبناء (١١١ فرداً)');
-  };
 
   const cinDesc = document.getElementById('cinDesc');
   const cinBar = document.getElementById('cinBar');
 
-  // Progressive steps by generation depth
   const steps = [
     {
-      delay: 1400,
+      delay: 1500,
       gen: 0,
       desc: '🌿 يتفرع الآن الجيل الأول: أبناء راضي (عبدالصمد، حمد، وقاد)',
       progress: 20
     },
     {
-      delay: 3000,
+      delay: 3400,
       gen: 1,
       desc: '🌿 يتفرع الآن الجيل الثاني: أبناء عبدالصمد (علي...)',
       progress: 35
     },
     {
-      delay: 4600,
+      delay: 5300,
       gen: 2,
       desc: '🌿 يتفرع الآن الجيل الثالث: أبناء علي (مرسي، حسن، عبدالصمد...)',
       progress: 50
     },
     {
-      delay: 6200,
+      delay: 7200,
       gen: 3,
       desc: '🌿 يتفرع الآن الجيل الرابع: أبناء مرسي (محمد، حسن، عبدالوهاب...)',
       progress: 65
     },
     {
-      delay: 7800,
+      delay: 9100,
       gen: 4,
       desc: '🌿 يتفرع الآن الجيل الخامس: فروع صلاح وعلي وزينب وعاشور',
       progress: 80
     },
     {
-      delay: 9400,
+      delay: 11000,
       gen: 5,
       desc: '🌿 يتفرع الآن الجيل السادس: فروع عماد، رضا، محمود، راضي، أحمد، محمد...',
       progress: 90
     },
     {
-      delay: 11000,
+      delay: 13000,
       gen: 6,
       desc: '🌿 تتفرع الأجيال الحديثة: أحفاد علي وصلاح وعاشور (تالا، تمارة، ياسين، حمادة...)',
       progress: 100,
@@ -4822,7 +5009,6 @@ function startProgressiveCinema() {
     const timer = setTimeout(() => {
       if (!isCinemaRunning) return;
       
-      // Uncollapse all nodes up to this generation
       ALL.forEach(n => {
         if (n.d <= step.gen) {
           collapsed.delete(n.u);
@@ -4834,24 +5020,10 @@ function startProgressiveCinema() {
       }
 
       render();
-      ht.style.zoom = 1;
+      autoFitTree(true);
       
       if (cinDesc) cinDesc.textContent = step.desc;
       if (cinBar) cinBar.style.width = step.progress + '%';
-
-      // Smooth scroll adjustment to reveal newly branched children
-      setTimeout(() => {
-        const rootEl = ht.querySelector('.root') || ht.querySelector('.p');
-        if (rootEl) {
-          const rect = ht.getBoundingClientRect();
-          // Adjust scroll smoothly as tree widens
-          scr.scrollTo({
-            left: Math.max(0, (ht.scrollWidth - scr.clientWidth) / 2),
-            top: Math.min(ht.scrollHeight - scr.clientHeight, step.gen * 90),
-            behavior: 'smooth'
-          });
-        }
-      }, 60);
 
       if (step.finish) {
         if (cinDesc) cinDesc.innerHTML = '✨ <b>اكتملت شجرة آل راضي بالكامل (١١١ فرداً في ١٠ أجيال)</b>';
@@ -4859,10 +5031,9 @@ function startProgressiveCinema() {
         const rootEl = ht.querySelector('.root') || ht.querySelector('.p');
         if (rootEl) rootEl.classList.remove('root-gold-pulse');
 
-        // Auto close banner after 4 seconds
         const closeTimer = setTimeout(() => {
           stopProgressiveCinema();
-        }, 4000);
+        }, 5000);
         progressiveCinemaTimers.push(closeTimer);
       }
     }, step.delay);
@@ -4870,6 +5041,8 @@ function startProgressiveCinema() {
     progressiveCinemaTimers.push(timer);
   });
 }
+window.startProgressiveCinema = startProgressiveCinema;
+window.stopProgressiveCinema = stopProgressiveCinema;
 
 // Wire buttons on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
