@@ -555,6 +555,26 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
 .scroller.map-fullscreen #htree{width:max-content;min-width:100%;padding:1.5rem .75rem 3rem}.scroller.map-fullscreen #htree>ul{margin-inline:auto;width:max-content;min-width:100%}.scroller.map-fullscreen #svg{max-width:none!important}
 @media(prefers-reduced-motion:reduce){.map-open,.map-open-icon{animation:none!important}}
 
+
+/* ── GUARANTEE PERMANENT OPEN GATE (الباب يفتح مرة واحدة فقط ولا يُغلق إلا بإعادة تحميل الصفحة) ── */
+.gate.open, .gate-in.open {
+  pointer-events: none !important;
+}
+.gate.open .leaf, .gate-in.open .leaf {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: scale(0.92) !important;
+  transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s !important;
+}
+.gate.open .knock, .gate-in.open .knock {
+  display: none !important;
+  pointer-events: none !important;
+}
+.gate.open .hero, .gate-in.open .hero {
+  pointer-events: auto !important;
+}
+
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1206,26 +1226,63 @@ document.querySelectorAll('.ar').forEach(a=>a.insertAdjacentHTML('afterbegin',IC
 const DOORS='<svg class="rose" viewBox="-100 -100 200 200" aria-hidden="true"><g fill="none" stroke="#C9A24B" stroke-width="1.6"><rect x="-60" y="-60" width="120" height="120"/><rect x="-60" y="-60" width="120" height="120" transform="rotate(45)"/><circle r="82"/><circle r="40"/><circle r="5" fill="#C9A24B"/></g></svg><i class="ring"></i>';
 document.querySelectorAll('.leaf').forEach(l=>l.innerHTML=DOORS);
 const gate=$('gate'),gin=gate.firstElementChild,heroEl=document.querySelector('.hero');
-let gateOpened=false,gateTick=false;
+let gateOpened=false, gateTick=false, gatePermanentlyOpened=false;
+
+function openFamilyGate(){
+  gatePermanentlyOpened = true;
+  gateOpened = true;
+  gin.style.setProperty('--a', '104deg');
+  gin.style.setProperty('--p', '1');
+  gin.style.setProperty('--g', '0.35');
+  gin.style.setProperty('--kn', '0');
+  gin.classList.add('open');
+  gate.classList.add('open');
+  heroEl.classList.add('live');
+  const btn = $('openGate');
+  if (btn) {
+    btn.setAttribute('aria-expanded', 'true');
+    btn.style.opacity = '0';
+    btn.style.pointerEvents = 'none';
+    setTimeout(() => { btn.style.display = 'none'; }, 400);
+  }
+}
+
 function setGateProgress(progress){
-  const p=Math.max(0,Math.min(1,progress));
-  gin.style.setProperty('--a',`${104*p}deg`);gin.style.setProperty('--p',String(p));gin.style.setProperty('--g',String(.35*p));gin.style.setProperty('--kn',String(1-p));
-  gin.classList.toggle('open',p>.985);heroEl.classList.toggle('live',p>.08);gateOpened=p>.5;
-  $('openGate').setAttribute('aria-expanded',p>.5?'true':'false');
+  if (gatePermanentlyOpened) return;
+  const p = Math.max(0, Math.min(1, progress));
+  gin.style.setProperty('--a', `${104*p}deg`);
+  gin.style.setProperty('--p', String(p));
+  gin.style.setProperty('--g', String(.35*p));
+  gin.style.setProperty('--kn', String(1-p));
+  
+  if (p >= 0.35) {
+    // If scrolled past 35%, open completely and permanently!
+    openFamilyGate();
+    return;
+  }
+  heroEl.classList.toggle('live', p > .08);
 }
-function openFamilyGate(){setGateProgress(1)}
-function closeFamilyGate(){setGateProgress(0)}
-$('openGate').addEventListener('click',()=>gateOpened?closeFamilyGate():openFamilyGate());
-// Touch/click on the doors remains an explicit way to open them.
-gin.querySelectorAll('.leaf').forEach(leaf=>leaf.addEventListener('click',openFamilyGate));
-// The entrance is scroll-reactive: moving down opens it; returning to the top closes it.
+
+// Click or tap to open gate once and permanently
+const openBtn = $('openGate');
+if (openBtn) openBtn.addEventListener('click', openFamilyGate);
+gin.querySelectorAll('.leaf').forEach(leaf => leaf.addEventListener('click', openFamilyGate));
+
+// Scroll opens the gate once; returning to top NEVER closes it!
 function syncGateToScroll(){
-  gateTick=false;const r=gate.getBoundingClientRect(),travel=Math.max(1,innerHeight*.34);
-  const progress=Math.max(0,Math.min(1,(-r.top)/travel));
-  setGateProgress(progress);
+  if (gatePermanentlyOpened) return;
+  gateTick = false;
+  const r = gate.getBoundingClientRect(), travel = Math.max(1, innerHeight * .34);
+  const progress = Math.max(0, Math.min(1, (-r.top) / travel));
+  if (progress > 0.25) {
+    openFamilyGate();
+  } else {
+    setGateProgress(progress);
+  }
 }
-addEventListener('scroll',()=>{if(!gateTick){gateTick=true;requestAnimationFrame(syncGateToScroll)}},{passive:true});
-addEventListener('resize',syncGateToScroll,{passive:true});syncGateToScroll();
+addEventListener('scroll', () => { if (!gatePermanentlyOpened && !gateTick) { gateTick = true; requestAnimationFrame(syncGateToScroll); } }, { passive: true });
+addEventListener('resize', syncGateToScroll, { passive: true });
+syncGateToScroll();
 
 const pc=$('pc'),pst=$('pst'),pcard=$('pcard');let cur=null,ct=0;
 
