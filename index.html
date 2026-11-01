@@ -709,7 +709,8 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
 <section class="hero" id="top">
   <div class="fall-layer" id="fall"></div>
   <div>
-    <h1 class="disp">آل راضي</h1>
+    <span class="hero-heritage-tag">سجل وشجرة نسب عائلة</span>
+    <h1 class="disp hero-grand-title">آل راضي</h1>
     <p class="split" id="split">أَصْلُهَا ثَابِتٌ وَفَرْعُهَا فِي السَّمَاءِ</p>
     <a class="go" href="#tree">شوف الشجرة</a>
   </div>
@@ -3381,6 +3382,187 @@ svg { overflow: visible; }
   font-style: italic;
 }
 
+
+/* ========================================================
+   MASTER UI/UX OVERHAUL (آل راضي)
+   Grand Royal Branding, Perfect Card Sizing, Enhanced Touch
+   ======================================================== */
+
+/* ── 1. GRAND ROYAL HERO TITLE ── */
+.hero-heritage-tag {
+  display: inline-block;
+  font-family: "IBM Plex Sans Arabic", sans-serif;
+  font-size: clamp(0.85rem, 2vw, 1.2rem);
+  font-weight: 600;
+  color: #C8A04A;
+  letter-spacing: 2px;
+  background: rgba(200, 160, 74, 0.12);
+  border: 1px solid rgba(200, 160, 74, 0.35);
+  padding: 0.35em 1.2em;
+  border-radius: 999px;
+  margin-bottom: 0.6rem;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  animation: rise 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.hero-grand-title, .hero h1.hero-grand-title, h1.disp.hero-grand-title {
+  font-family: "Aref Ruqaa", "Amiri", serif !important;
+  font-size: clamp(5.8rem, 15vw, 12.5rem) !important;
+  font-weight: 700 !important;
+  line-height: 1.02 !important;
+  margin: 0.1rem 0 0.5rem !important;
+  text-wrap: balance !important;
+  background: linear-gradient(135deg, #FFF5CC 0%, #E5B85C 25%, #C8A04A 50%, #E8C175 75%, #FFF0B3 100%) !important;
+  background-size: 200% auto !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 4px 25px rgba(200, 160, 74, 0.55)) drop-shadow(0 2px 6px rgba(0,0,0,0.8)) !important;
+  animation: rise 1s cubic-bezier(0.2, 0.8, 0.2, 1) both, shine 8s linear infinite !important;
+}
+
+@media (max-width: 760px) {
+  .hero-heritage-tag {
+    font-size: 0.82rem;
+    padding: 0.3em 1em;
+    margin-bottom: 0.35rem;
+  }
+  .hero-grand-title, .hero h1.hero-grand-title, h1.disp.hero-grand-title {
+    font-size: clamp(4.2rem, 21vw, 7.5rem) !important;
+    line-height: 1.05 !important;
+    text-align: center !important;
+    margin: 0.2rem auto 0.6rem !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .hero-grand-title, .hero h1.hero-grand-title, h1.disp.hero-grand-title {
+    font-size: clamp(3.8rem, 23vw, 5.5rem) !important;
+  }
+}
+
+/* ── 2. PERFECT TREE NODE CARDS SIZING ── */
+.nt .p {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  direction: rtl !important;
+  min-width: 105px !important;
+  max-width: 220px !important;
+  padding: 0.35rem 0.9rem 0.35rem 0.5rem !important;
+  border-radius: 999px !important;
+  background: var(--panel) !important;
+  border: 2.5px solid var(--c) !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+  transition: transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1), box-shadow 0.25s, border-color 0.2s !important;
+  text-align: right !important;
+}
+.nt .p:hover {
+  transform: translateY(-3px) scale(1.05) !important;
+  box-shadow: 0 12px 25px -8px var(--c) !important;
+}
+.nt .p b {
+  font: 700 clamp(0.95rem, 1.8vw, 1.15rem) "Aref Ruqaa", "Amiri", serif !important;
+  white-space: normal !important;
+  line-height: 1.25 !important;
+  word-break: keep-all !important;
+  overflow-wrap: break-word !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-align: center !important;
+}
+.nt .p.root {
+  min-width: 140px !important;
+  padding: 0.55rem 1.4rem 0.55rem 0.75rem !important;
+  border-width: 3.5px !important;
+  box-shadow: 0 0 25px rgba(200, 160, 74, 0.4) !important;
+}
+.nt .p.root b {
+  font-size: 1.35rem !important;
+}
+.pv {
+  flex-shrink: 0 !important;
+  width: 2.1rem !important;
+  height: 2.1rem !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  font: 700 1.15rem "Aref Ruqaa", serif !important;
+}
+
+/* Badge button below node */
+.bdg {
+  white-space: nowrap !important;
+  font-size: 0.76rem !important;
+  padding: 0.25em 0.75em !important;
+  border-radius: 999px !important;
+  margin-top: 4px !important;
+  touch-action: manipulation;
+}
+
+/* ── 3. WHATSAPP DISPATCH & ORDER BADGE ── */
+.fa-order-badge-box {
+  background: rgba(200, 160, 74, 0.1);
+  border: 1px dashed #C8A04A;
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
+  margin: 0.85rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+}
+.fa-whatsapp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #25D366;
+  color: #FFFFFF !important;
+  padding: 0.7em 1.4em;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
+  transition: all 0.25s;
+  width: 100%;
+  margin: 0.5rem 0;
+  box-sizing: border-box;
+}
+.fa-whatsapp-btn:hover {
+  background: #20BA5A;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(37, 211, 102, 0.45);
+}
+
+/* ── 4. ADMIN PENDING BADGE ── */
+.admin-badge-indicator {
+  background: #EF4444;
+  color: #FFFFFF;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 999px;
+  margin-inline-start: 4px;
+  display: inline-block;
+  line-height: 1.2;
+}
+
+/* ── 5. GENERAL ENHANCEMENTS ── */
+body {
+  font-feature-settings: "cv01", "cv02", "cv03", "cv04";
+  -webkit-font-smoothing: antialiased;
+}
+p {
+  line-height: 1.7;
+}
+
 </style>
 <button class="fa-fab" id="faContribute" type="button">طلب تحديث أو إضافة <b>＋</b></button>
 <div class="fa-modal" id="faModal" role="dialog" aria-modal="true" aria-labelledby="faTitle"><div class="fa-box"><div class="fa-head"><h2 id="faTitle">مساهمة عائلية</h2><button class="fa-x" id="faClose" aria-label="إغلاق">×</button></div><div id="faContent"></div></div></div>
@@ -3406,7 +3588,38 @@ if(kind==='person')html=`<form id="contribForm" name="contribForm" class="fa-for
 if(kind==='correction')html=`<form id="faSubmit" class="fa-form"><label class="fa-wide">اختر الفرد *<select name="person" required><option value="">اختر فردًا</option>${personOptions()}</select></label><label>نوع التصحيح *<select name="field"><option value="n">الاسم</option><option value="b">سنة الميلاد</option><option value="dd">سنة الوفاة</option><option value="pl">المكان</option><option value="job">المهنة</option><option value="t">النبذة</option></select></label><label>القيمة الصحيحة المقترحة *<input name="value" required maxlength="300"></label><label class="fa-wide">سبب التصحيح / المصدر<textarea name="details" maxlength="1200"></textarea></label><label>اسم مقدم المساهمة<input name="sender" maxlength="80"></label><label>وسيلة تواصل اختيارية<input name="contact" maxlength="100"></label><div class="fa-wide fa-actions"><button class="fa-btn">إرسال التصحيح</button></div></form>`;
 if(kind==='story')html=`<form id="faSubmit" class="fa-form"><label>عنوان القصة *<input name="title" required maxlength="120"></label><label>الشخص أو الفرع المرتبط<select name="person"><option value="">غير محدد</option>${personOptions()}</select></label><label class="fa-wide">القصة أو الذكرى *<textarea name="body" required maxlength="5000" style="min-height:160px"></textarea></label><label>الفترة التقريبية<input name="period" maxlength="80" placeholder="مثلاً: منتصف القرن الماضي"></label><label>اسم الراوي<input name="sender" maxlength="80"></label><label class="fa-wide">مصدر أو شهود أو توضيح<textarea name="details" maxlength="1000"></textarea></label><div class="fa-wide fa-actions"><button class="fa-btn">إرسال القصة</button></div></form>`;
 if(kind==='photo')html=`<form id="faSubmit" class="fa-form"><label>وصف الصورة / الوثيقة *<input name="title" required maxlength="120"></label><label>الفرد أو الفرع المرتبط<select name="person"><option value="">غير محدد</option>${personOptions()}</select></label><label class="fa-wide">اختر ملفًا (صورة فقط في النسخة التجريبية)<input name="file" type="file" accept="image/*" required></label><div class="fa-wide" id="faFilePreview"></div><label>التاريخ التقريبي<input name="period" maxlength="80"></label><label>اسم صاحب الصورة / مقدمها<input name="sender" maxlength="80"></label><label class="fa-wide">تفاصيل إضافية<textarea name="details" maxlength="1000"></textarea></label><div class="fa-wide fa-note">الصورة تُحفظ محليًا في هذا المتصفح للتجربة. لا ترفع صورًا خاصة أو وثائق تحتوي بيانات حساسة.</div><div class="fa-wide fa-actions"><button class="fa-btn">إرسال للمراجعة</button></div></form>`;
-host.innerHTML=html;const form=$('faSubmit');form.onsubmit=async e=>{e.preventDefault();const fd=new FormData(form),d=Object.fromEntries(fd.entries());if(kind==='person'){d.birth=d.birth?Number(d.birth):null;d.death=d.death?Number(d.death):null}if(kind==='photo'){const file=fd.get('file');if(file.size>1200000){alert('حجم الصورة أكبر من 1.2MB في النسخة التجريبية.');return}d.image=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)});delete d.file}delete d.file;newRequest(kind,d);open('وصلت مساهمتك',`<div class="fa-empty"><div style="font-size:42px">✓</div><h3>شكرًا لمساهمتك</h3><p>تم تسجيلها في قائمة المراجعة. لن تُنشر إلا بعد مراجعة الأدمن.</p><p class="fa-note">رقم الطلب: ${esc(requests[0].id)}</p><button class="fa-btn" id="faDone">إغلاق</button></div>`);$('faDone').onclick=close};
+host.innerHTML=html;const form=$('faSubmit');form.onsubmit=async e=>{e.preventDefault();const fd=new FormData(form),d=Object.fromEntries(fd.entries());if(kind==='person'){d.birth=d.birth?Number(d.birth):null;d.death=d.death?Number(d.death):null}if(kind==='photo'){const file=fd.get('file');if(file.size>1200000){alert('حجم الصورة أكبر من 1.2MB في النسخة التجريبية.');return}d.image=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)});delete d.file}delete d.file;newRequest(kind,d);const reqItem = requests[0];
+const waDetails = encodeURIComponent(
+  '🌟 *طلب مساهمة جديد في شجرة آل راضي*\n\n' +
+  '📌 *النوع:* ' + (reqItem.type === 'person' ? 'إضافة فرد جديد' : reqItem.type === 'correction' ? 'تصحيح معلومة' : reqItem.type === 'story' ? 'قصة أو ذكرى' : 'صورة أو وثيقة') + '\n' +
+  '🔢 *رقم الطلب:* ' + reqItem.id + '\n' +
+  '👤 *مقدم الطلب:* ' + (reqItem.data?.submitter || reqItem.data?.name || 'زائر من العائلة') + '\n' +
+  (reqItem.data?.phone ? ('📞 *الهاتف:* ' + reqItem.data.phone + '\n') : '') +
+  (reqItem.data?.person ? ('🎯 *الفرد المعني:* ' + reqItem.data.person + '\n') : '') +
+  (reqItem.data?.notes ? ('📝 *التفاصيل:* ' + reqItem.data.notes + '\n') : '') +
+  '\n🔗 *رابط مراجعة واعتماد الطلب من لوحة الأدمن:*\n' +
+  window.location.origin + window.location.pathname
+);
+
+open('وصلت مساهمتك المباركة', `
+  <div class="fa-empty">
+    <div style="font-size:46px;color:#10B981">✓</div>
+    <h3 style="color:#C8A04A;font-family:'Aref Ruqaa',serif;font-size:1.6rem">شكرًا لمساهمتك في حفظ تاريخ العائلة</h3>
+    <p style="line-height:1.6">تم تسجيل طلبك بنجاح في قاعدة بيانات العائلة، وهو الآن بانتظار مراجعة واعتماد مسؤول الموقع (الأدمن) لضمان دقة الأنساب قبل النشر.</p>
+    
+    <div class="fa-order-badge-box">
+      <span>الرقم المرجعي لتتبع طلبك:</span>
+      <b style="color:#C8A04A;letter-spacing:1px;font-size:1.1rem">${esc(reqItem.id)}</b>
+    </div>
+
+    <!-- Direct WhatsApp Dispatch to Admin -->
+    <a href="https://api.whatsapp.com/send?text=${waDetails}" target="_blank" rel="noopener" class="fa-whatsapp-btn">
+      <span>📲 إرسال إشعار فوري للأدمن عبر واتساب</span>
+    </a>
+
+    <button class="fa-btn" id="faDone" style="margin-top:0.75rem">إغلاق النافذة</button>
+  </div>
+`);$('faDone').onclick=close};
 }
 function adminGate(){if(admin){adminPanel();return}open('دخول مسؤول العائلة',`<div class="fa-login"><p class="fa-note">نسخة محلية للتجربة فقط. رمز الدخول التجريبي: <b>246810</b>. هذا الرمز ليس نظام حماية إنتاجيًا.</p><label>رمز المسؤول<input id="faPin" type="password" inputmode="numeric" placeholder="رمز الدخول"></label><button class="fa-btn" id="faLogin">دخول لوحة الإدارة</button><small class="fa-toolbarhint">في النسخة المنشورة يجب استبدال ذلك بمصادقة Supabase وحماية الخادم.</small></div>`);$('faLogin').onclick=()=>{if($('faPin').value==='246810'){admin=true;write(AKEY,true);adminPanel()}else alert('رمز الدخول غير صحيح')};$('faPin').addEventListener('keydown',e=>{if(e.key==='Enter')$('faLogin').click()})}
 function adminPanel(){const pending=requests.filter(x=>x.status==='pending').length,approved=requests.filter(x=>x.status==='approved').length;open('لوحة إدارة أرشيف العائلة',`<div class="fa-statgrid"><div class="fa-stat"><strong>${pending}</strong><small>طلبات معلقة</small></div><div class="fa-stat"><strong>${approved}</strong><small>طلبات مقبولة</small></div><div class="fa-stat"><strong>${allPeople().length}</strong><small>أفراد الشجرة</small></div></div><div class="fa-actions" style="margin:0 0 14px"><button class="fa-btn alt" id="faLogout">تسجيل الخروج</button><button class="fa-btn alt" id="faBackup">تصدير نسخة احتياطية</button><button class="fa-btn alt" id="faRestore">استيراد نسخة</button><input id="faRestoreFile" type="file" accept="application/json" hidden></div><div class="fa-tabs"><button class="fa-tab ${activeFilter==='pending'?'active':''}" data-filter="pending">قيد المراجعة (${pending})</button><button class="fa-tab ${activeFilter==='approved'?'active':''}" data-filter="approved">مقبولة (${approved})</button><button class="fa-tab ${activeFilter==='rejected'?'active':''}" data-filter="rejected">مرفوضة (${requests.filter(x=>x.status==='rejected').length})</button><button class="fa-tab ${activeFilter==='all'?'active':''}" data-filter="all">الكل</button></div><div id="faInbox"></div><div class="fa-note">مهم: هذه النسخة تحفظ البيانات على نفس المتصفح فقط. لا يوجد نشر مشترك بين الأجهزة حتى ربط قاعدة بيانات وخادم آمن.</div>`);
