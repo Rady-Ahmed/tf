@@ -798,7 +798,13 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
   </div>
   <div class="tabs" id="tabs" role="tablist" aria-label="طريقة العرض"></div>
   <div class="chips2" id="chips"></div>
-  <div class="scroller" style="touch-action:pan-x pan-y pinch-zoom" id="scr"><div id="netControls" aria-label="فلترة شبكة العائلة"></div><svg id="svg" role="group" aria-label="شجرة العائلة"></svg><div class="nt" id="htree"></div><div id="gens"></div></div>
+  
+  <div class="map-scroll-hint" id="mapScrollHint">
+    <span class="msh-icon">📱</span>
+    <span class="msh-text" id="mshText">تمرير الصفحة بإصبع واحد · تحريك الشجرة بإصبعين</span>
+    <button type="button" class="msh-toggle" id="btnToggleMapLock">🔓 تفعيل سحب الشجرة</button>
+  </div>
+  <div class="scroller mobile-page-scroll-mode" style="touch-action:pan-y pinch-zoom" id="scr"><div id="netControls" aria-label="فلترة شبكة العائلة"></div><svg id="svg" role="group" aria-label="شجرة العائلة"></svg><div class="nt" id="htree"></div><div id="gens"></div></div>
   <div id="cards" hidden></div>
   <div class="panel" id="panel" aria-live="polite"><p class="mt">اختر فردًا من الشجرة لتعرف نسبه وصلته بك.</p></div>
 </section>
@@ -1601,8 +1607,37 @@ function closeCard(){
   if(pc.hidden)return;pst.classList.remove('open');pcard.classList.remove('in');
   ct=setTimeout(()=>{pc.classList.remove('show');ct=setTimeout(()=>{pc.hidden=true;document.body.style.overflow=''},400)},reduce?0:1100);
 }
-document.addEventListener('click',e=>{const o=e.target.closest('[data-open]'),g=e.target.closest('[data-go]');
-  if(o)openCard(ALL[+o.dataset.open]);else if(g)openCard(ALL[+g.dataset.go])});
+document.addEventListener('click', e => {
+  // Check if click was on a flip card (.pt)
+  const ptCard = e.target.closest('.pt');
+  const openBtn = e.target.closest('.pt-b-cta, button.go, [data-go]');
+  
+  // If clicking on .pt card (especially on mobile/touch):
+  if (ptCard) {
+    // If clicking directly on the "Open Profile" button on the back:
+    if (openBtn || e.target.closest('.pt-b-cta')) {
+      e.stopPropagation();
+      openCard(ALL[+ptCard.dataset.open]);
+      return;
+    }
+    // Otherwise toggle flip rotation (تلف حوالين نفسها)
+    const isAlreadyFlipped = ptCard.classList.contains('flipped');
+    // Unflip any other flipped cards
+    document.querySelectorAll('.pt.flipped').forEach(c => {
+      if (c !== ptCard) c.classList.remove('flipped');
+    });
+    ptCard.classList.toggle('flipped');
+    return;
+  }
+
+  // Handle other data-open buttons (like in carousel or modal)
+  const o = e.target.closest('[data-open]'), g = e.target.closest('[data-go]');
+  if (o && !o.closest('.pt')) {
+    openCard(ALL[+o.dataset.open]);
+  } else if (g) {
+    openCard(ALL[+g.dataset.go]);
+  }
+});
 $('pcx').addEventListener('click',closeCard);pc.addEventListener('click',e=>{if(e.target===pc)closeCard()});
 addEventListener('keydown',e=>{if(e.key==='Escape')closeCard()});
 pcard.addEventListener('change',e=>{if(e.target.type!=='file'||!e.target.files[0])return;const r=new FileReader();
@@ -1639,10 +1674,55 @@ pcard.addEventListener('change',e=>{if(e.target.type!=='file'||!e.target.files[0
     }
     requestAnimationFrame(frame);
   }
-  stg.addEventListener('pointerdown',e=>{drag=1;cm=0;sx=lx=e.clientX;tgt=null});
-  addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-lx;lx=e.clientX;cm=Math.max(cm,Math.abs(e.clientX-sx));rot+=dx*.35;v=dx*.35});
-  addEventListener('pointerup',()=>{drag=0});
-  stg.addEventListener('pointerenter',()=>hover=1);stg.addEventListener('pointerleave',()=>hover=0);
+  // Enhanced Mobile & Desktop Pointer/Touch Controls for 3D Ring
+  stg.addEventListener('pointerdown', e => {
+    drag = 1;
+    cm = 0;
+    sx = lx = e.clientX;
+    tgt = null;
+    try { stg.setPointerCapture(e.pointerId); } catch (_) {}
+  });
+
+  window.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const dx = e.clientX - lx;
+    lx = e.clientX;
+    cm += Math.abs(dx);
+    rot += dx * 0.42;
+    v = dx * 0.42;
+  });
+
+  window.addEventListener('pointerup', e => {
+    drag = 0;
+    try { stg.releasePointerCapture(e.pointerId); } catch (_) {}
+  });
+  window.addEventListener('pointercancel', () => { drag = 0; });
+
+  // Direct native touch support for iOS Safari & Android Chrome
+  stg.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) {
+      drag = 1;
+      cm = 0;
+      sx = lx = e.touches[0].clientX;
+      tgt = null;
+    }
+  }, { passive: true });
+
+  stg.addEventListener('touchmove', e => {
+    if (!drag || e.touches.length !== 1) return;
+    const cx = e.touches[0].clientX;
+    const dx = cx - lx;
+    lx = cx;
+    cm += Math.abs(dx);
+    rot += dx * 0.48;
+    v = dx * 0.48;
+  }, { passive: true });
+
+  stg.addEventListener('touchend', () => { drag = 0; }, { passive: true });
+  stg.addEventListener('touchcancel', () => { drag = 0; }, { passive: true });
+
+  stg.addEventListener('pointerenter', () => hover = 1);
+  stg.addEventListener('pointerleave', () => hover = 0);
   stg.addEventListener('click',e=>{const c=e.target.closest('.cd');
     if(cm>6){e.stopPropagation();e.preventDefault();cm=0;return}
     if(c&&+c.dataset.i!==front){e.stopPropagation();e.preventDefault();snap(+c.dataset.i)}},true);
@@ -3789,6 +3869,129 @@ svg { overflow: visible; }
 }
 
 
+
+/* ── 3D FLIP CARDS (كروت بتلف حوالين نفسها على الموبايل والكمبيوتر) ── */
+.pt {
+  perspective: 1200px !important;
+  cursor: pointer !important;
+}
+.pt-in {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  transform-style: preserve-3d !important;
+  transition: transform 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+}
+/* Flip on hover for desktop, AND flip on .flipped class for mobile tap */
+.pt:hover .pt-in, .pt:focus-visible .pt-in, .pt.flipped .pt-in {
+  transform: rotateY(180deg) !important;
+}
+
+/* ── دوّامة آل راضي (3D RING CAROUSEL MOBILE ENHANCEMENTS) ── */
+.car .stage {
+  touch-action: pan-y !important;
+  -webkit-overflow-scrolling: touch !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  cursor: grab !important;
+}
+.car .stage:active {
+  cursor: grabbing !important;
+}
+.cd {
+  transition: transform 0.4s ease, filter 0.4s ease !important;
+}
+.cd.front {
+  filter: drop-shadow(0 12px 28px rgba(200, 160, 74, 0.55)) !important;
+}
+.cd-in {
+  transform-style: preserve-3d !important;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+}
+/* Allow 3D card in the ring to also flip on click */
+.cd.flipped .cd-in {
+  transform: translateZ(40px) scale(1.08) rotateY(180deg) !important;
+}
+
+/* Mobile buttons for ring rotation */
+.car .cbtn {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 1rem !important;
+  margin-top: 1rem !important;
+}
+.car .cbtn button {
+  padding: 0.65rem 1.4rem !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1.5px solid var(--gold) !important;
+  color: var(--ink) !important;
+  backdrop-filter: blur(8px) !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+}
+.car .cbtn button:hover, .car .cbtn button:active {
+  background: var(--gold) !important;
+  color: #071B1F !important;
+  transform: scale(1.04) !important;
+}
+
+/* ── SMART MOBILE SCROLL & GESTURE LOCK (حل مشكلة اللخبطة بين سكرول الخريطة وسكرول الصفحة) ── */
+.map-scroll-hint {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(7, 27, 31, 0.92);
+  border: 1.5px solid rgba(200, 160, 74, 0.5);
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+  color: #EAF0F6;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+.map-scroll-hint .msh-text {
+  flex: 1;
+  font-size: 0.82rem;
+  line-height: 1.3;
+}
+.map-scroll-hint .msh-toggle {
+  background: linear-gradient(135deg, #C8A04A, #F3E5AB);
+  color: #071B1F;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.2s;
+}
+.map-scroll-hint .msh-toggle.active {
+  background: #047857;
+  color: #FFFFFF;
+}
+
+@media (max-width: 768px) {
+  .map-scroll-hint {
+    display: flex;
+  }
+  /* In normal locked mode on mobile, let vertical touch scroll the PAGE */
+  .scroller.mobile-page-scroll-mode {
+    touch-action: pan-y pinch-zoom !important;
+  }
+  .scroller.mobile-tree-free-mode {
+    touch-action: pan-x pan-y pinch-zoom !important;
+    border: 2px solid var(--gold) !important;
+    box-shadow: 0 0 20px rgba(200, 160, 74, 0.3) !important;
+  }
+}
+
 /* ── ALL GENERATION NAMES GRID & CARDS STYLING ── */
 .card {
   grid-template-columns: 1fr 1.35fr !important;
@@ -5508,6 +5711,42 @@ function openEditProfileModal(node, focusField = '') {
     // Suppress promise uncaught rejections in production
     e.preventDefault();
   });
+})();
+</script>
+
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// 📱 MOBILE SCROLL HARMONY CONTROLLER (قفل / تفعيل سحب الشجرة لمنع اللخبطة)
+// ═══════════════════════════════════════════════════════════════════════════
+(function() {
+  const scrEl = document.getElementById('scr');
+  const toggleBtn = document.getElementById('btnToggleMapLock');
+  const hintText = document.getElementById('mshText');
+  if (!scrEl || !toggleBtn) return;
+
+  let isFreeMode = false;
+
+  toggleBtn.onclick = function() {
+    isFreeMode = !isFreeMode;
+    if (isFreeMode) {
+      scrEl.classList.remove('mobile-page-scroll-mode');
+      scrEl.classList.add('mobile-tree-free-mode');
+      scrEl.style.touchAction = 'pan-x pan-y pinch-zoom';
+      toggleBtn.classList.add('active');
+      toggleBtn.innerHTML = '🔒 قفل (تمرير الصفحة)';
+      if (hintText) hintText.innerHTML = '<b>وضع تحريك الشجرة مفعّل:</b> اسحب بإصبعك بحرية';
+      toast('🔓 تم تفعيل سحب الشجرة بإصبع واحد');
+    } else {
+      scrEl.classList.add('mobile-page-scroll-mode');
+      scrEl.classList.remove('mobile-tree-free-mode');
+      scrEl.style.touchAction = 'pan-y pinch-zoom';
+      toggleBtn.classList.remove('active');
+      toggleBtn.innerHTML = '🔓 تفعيل سحب الشجرة';
+      if (hintText) hintText.innerHTML = 'تمرير الصفحة بإصبع واحد · تحريك الشجرة بإصبعين';
+      toast('🔒 تم تثبيت التمرير السلس للصفحة');
+    }
+  };
 })();
 </script>
 
