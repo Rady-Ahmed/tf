@@ -4,7 +4,8 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/((?!admin\\.html|favicon\\.svg|icons\\.svg|assets).*)", "destination": "/index.html" }
   ],
   "headers": [
     {
