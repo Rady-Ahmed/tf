@@ -960,6 +960,38 @@ html, body {
   }
 }
 
+
+/* ── STRICT MOBILE TREE LOCK & CLEAN PRESENTATION ── */
+@media (max-width: 768px) {
+  #tabs, .tabs {
+    display: none !important;
+  }
+  #mapOpen, .map-open {
+    display: none !important;
+  }
+  #netControls {
+    display: none !important;
+  }
+  #cards {
+    display: none !important;
+  }
+  #gens {
+    display: none !important;
+  }
+  #svg {
+    display: none !important;
+  }
+  .nt {
+    display: block !important;
+    width: max-content !important;
+    min-width: 100% !important;
+    margin: 0 auto !important;
+  }
+  .scroller {
+    touch-action: pan-x pan-y pinch-zoom !important;
+  }
+}
+
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -2101,27 +2133,29 @@ addEventListener('keydown',e=>{if(e.key==='Escape')closeCard()});
 pcard.addEventListener('change',e=>{if(e.target.type!=='file'||!e.target.files[0])return;const r=new FileReader();
   r.onload=()=>{cur.img=r.result;persist();pcard.innerHTML=cardHTML(cur);pcard.classList.remove('in');void pcard.offsetWidth;pcard.classList.add('in');if(mode==='cards')renderCards();window.rebuildCar&&window.rebuildCar()};r.readAsDataURL(e.target.files[0])});
 
-// ---- 3D family carousel ----
+// ---- 3D family carousel (Continuous Auto-Spin + Touch & Flip) ----
 (()=>{
   let LIST=carList(),N=LIST.length,step=360/N;const car=$('car'),r3=$('r3'),stg=$('stg'),cap=$('cap');
-  let rot=0,v=0,tgt=null,drag=0,hover=0,cm=0,sx=0,lx=0,front=-1;
+  let rot=0,v=0.35,tgt=null,drag=0,hover=0,cm=0,front=-1;
+  let lastX=0;
   const BACK='<svg viewBox="-100 -100 200 200" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="3"><rect x="-55" y="-55" width="110" height="110"/><rect x="-55" y="-55" width="110" height="110" transform="rotate(45)"/><circle r="30"/></g></svg>';
+
   function build(){
     r3.innerHTML=LIST.map((n,i)=>`<div class="cd" data-i="${i}" data-open="${n.id}" role="button" tabindex="0" aria-label="${n.n}، ${n.sf}" style="${pcs(n)}"><div class="cd-in">
       <div class="cd-f"><span class="cd-ph">${n.img?`<img src="${n.img}" alt="">`:n.n[0]}</span><b class="disp">${n.n}</b><span class="cd-sf">${n.sf}</span><small>${n.y}</small></div>
       <div class="cd-b">${BACK}</div></div></div>`).join('');
   }
+
   function layout(){
-    const isMob = innerWidth < 600;
+    const isMob = innerWidth < 650;
     const isTiny = innerWidth < 380;
-    // Perfect sizing on phones to prevent horizontal cut-off
-    const cw = isTiny ? 122 : (isMob ? 136 : 190);
+    const cw = isTiny ? 122 : (isMob ? 138 : 190);
     const ch = Math.round(cw * 1.48);
-    const R = Math.round((cw / 2) / Math.tan(Math.PI / N)) + (isMob ? 16 : 34);
+    const R = Math.round((cw / 2) / Math.tan(Math.PI / N)) + (isMob ? 20 : 34);
     car.style.setProperty('--cw', cw + 'px');
     car.style.setProperty('--ch', ch + 'px');
     car.dataset.R = R;
-    stg.style.height = Math.round(ch * (isMob ? 1.58 : 1.45)) + 'px';
+    stg.style.height = Math.round(ch * (isMob ? 1.55 : 1.45)) + 'px';
     [...r3.children].forEach((c, i) => c.style.transform = `rotateY(${i * step}deg) translateZ(${R}px)`);
     renderRingDots();
   }
@@ -2142,6 +2176,7 @@ pcard.addEventListener('change',e=>{if(e.target.type!=='file'||!e.target.files[0
       d.classList.toggle('active', i === activeIndex);
     });
   }
+
   function setFront(){
     [...r3.children].forEach((c, i) => c.classList.toggle('front', i === front));
     const n = LIST[front];
@@ -2162,80 +2197,155 @@ pcard.addEventListener('change',e=>{if(e.target.type!=='file'||!e.target.files[0
       <div class="cap-actions">
         <button class="go o cap-open-btn" data-open="${n.id}">افتح السيرة والملف الكامل ↗</button>
       </div>
+      <div class="car-counter-pill">${front+1} من ${N}</div>
     `;
     updateRingDots(front);
   }
-  const snap=i=>{const b=-i*step;tgt=b+360*Math.round((rot-b)/360)};
+
+  const snap = i => {
+    const b = -i * step;
+    tgt = b + 360 * Math.round((rot - b) / 360);
+  };
+
+  // Continuous 60fps Rotation Loop
   function frame(){
-    const r=car.getBoundingClientRect();
-    if(r.bottom>0&&r.top<innerHeight){
-      if(tgt!==null){rot=reduce?tgt:rot+(tgt-rot)*.12;if(reduce||Math.abs(tgt-rot)<.05){rot=tgt;tgt=null}}
-      else if(!drag&&!reduce){v+=((hover?0:.22)-v)*.04;rot+=v}
-      r3.style.transform=`translateZ(${-(+car.dataset.R)}px) rotateY(${rot.toFixed(2)}deg)`;
-      const f=((Math.round(-rot/step)%N)+N)%N;if(f!==front){front=f;setFront()}
+    const r = car.getBoundingClientRect();
+    const inView = r.bottom > 0 && r.top < innerHeight;
+    if (inView) {
+      if (tgt !== null) {
+        rot += (tgt - rot) * 0.12;
+        if (Math.abs(tgt - rot) < 0.05) {
+          rot = tgt;
+          tgt = null;
+        }
+      } else if (!drag) {
+        // Continuous auto-spin around itself
+        const isMouseDevice = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        const targetV = (isMouseDevice && hover) ? 0 : 0.32;
+        v += (targetV - v) * 0.06;
+        rot += v;
+      }
+      r3.style.transform = `translateZ(${-(+car.dataset.R)}px) rotateY(${rot.toFixed(2)}deg)`;
+      const f = ((Math.round(-rot / step) % N) + N) % N;
+      if (f !== front) {
+        front = f;
+        setFront();
+      }
     }
     requestAnimationFrame(frame);
   }
-  // Enhanced Mobile & Desktop Pointer/Touch Controls for 3D Ring
-  stg.addEventListener('pointerdown', e => {
-    drag = 1;
-    cm = 0;
-    sx = lx = e.clientX;
-    tgt = null;
-    try { stg.setPointerCapture(e.pointerId); } catch (_) {}
-  });
 
-  window.addEventListener('pointermove', e => {
-    if (!drag) return;
-    const dx = e.clientX - lx;
-    lx = e.clientX;
-    cm += Math.abs(dx);
-    rot += dx * 0.42;
-    v = dx * 0.42;
-  });
-
-  window.addEventListener('pointerup', e => {
-    drag = 0;
-    try { stg.releasePointerCapture(e.pointerId); } catch (_) {}
-  });
-  window.addEventListener('pointercancel', () => { drag = 0; });
-
-  // Direct native touch support for iOS Safari & Android Chrome
+  // ── Unified Touch Controls for Mobile ──
   stg.addEventListener('touchstart', e => {
     if (e.touches.length === 1) {
       drag = 1;
       cm = 0;
-      sx = lx = e.touches[0].clientX;
+      lastX = e.touches[0].clientX;
       tgt = null;
     }
   }, { passive: true });
 
   stg.addEventListener('touchmove', e => {
     if (!drag || e.touches.length !== 1) return;
-    const cx = e.touches[0].clientX;
-    const dx = cx - lx;
-    lx = cx;
+    const curX = e.touches[0].clientX;
+    const dx = curX - lastX;
+    lastX = curX;
     cm += Math.abs(dx);
-    rot += dx * 0.48;
-    v = dx * 0.48;
+    rot += dx * 0.55;
+    v = dx * 0.35;
   }, { passive: true });
 
-  stg.addEventListener('touchend', () => { drag = 0; }, { passive: true });
-  stg.addEventListener('touchcancel', () => { drag = 0; }, { passive: true });
+  stg.addEventListener('touchend', () => {
+    drag = 0;
+    hover = 0;
+  }, { passive: true });
 
-  stg.addEventListener('pointerenter', () => hover = 1);
-  stg.addEventListener('pointerleave', () => hover = 0);
-  stg.addEventListener('click',e=>{const c=e.target.closest('.cd');
-    if(cm>6){e.stopPropagation();e.preventDefault();cm=0;return}
-    if(c&&+c.dataset.i!==front){e.stopPropagation();e.preventDefault();snap(+c.dataset.i)}},true);
-  stg.addEventListener('keydown',e=>{
-    if(e.key==='Enter'||e.key===' '){const c=e.target.closest('.cd');if(c){e.preventDefault();c.click()}}
-    if(e.key==='ArrowLeft')$('cnext').click();if(e.key==='ArrowRight')$('cprev').click()});
-  $('cnext').addEventListener('click',()=>{tgt=-(Math.round(-rot/step)+1)*step});
-  $('cprev').addEventListener('click',()=>{tgt=-(Math.round(-rot/step)-1)*step});
-  addEventListener('resize',layout);
-  window.rebuildCar=()=>{LIST=carList();N=LIST.length;step=360/N;build();layout();front=-1};
-  build();layout();frame();
+  stg.addEventListener('touchcancel', () => {
+    drag = 0;
+    hover = 0;
+  }, { passive: true });
+
+  // ── Mouse Drag for Desktop ──
+  stg.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    drag = 1;
+    cm = 0;
+    lastX = e.clientX;
+    tgt = null;
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (!drag) return;
+    const dx = e.clientX - lastX;
+    lastX = e.clientX;
+    cm += Math.abs(dx);
+    rot += dx * 0.45;
+    v = dx * 0.35;
+  });
+
+  window.addEventListener('mouseup', () => {
+    drag = 0;
+  });
+
+  stg.addEventListener('mouseenter', () => {
+    const isMouse = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (isMouse) hover = 1;
+  });
+
+  stg.addEventListener('mouseleave', () => {
+    hover = 0;
+  });
+
+  // Tap handling
+  stg.addEventListener('click', e => {
+    const c = e.target.closest('.cd');
+    if (cm > 8) {
+      e.stopPropagation();
+      e.preventDefault();
+      cm = 0;
+      return;
+    }
+    if (c) {
+      const idx = +c.dataset.i;
+      if (idx !== front) {
+        e.stopPropagation();
+        e.preventDefault();
+        snap(idx);
+      } else {
+        // Front card clicked -> open its profile
+        const openId = c.dataset.open;
+        if (openId && typeof ALL !== 'undefined') {
+          openCard(ALL[+openId]);
+        }
+      }
+    }
+  }, true);
+
+  stg.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const c = e.target.closest('.cd');
+      if (c) { e.preventDefault(); c.click(); }
+    }
+    if (e.key === 'ArrowLeft') $('cnext').click();
+    if (e.key === 'ArrowRight') $('cprev').click();
+  });
+
+  $('cnext').addEventListener('click', () => { tgt = -(Math.round(-rot / step) + 1) * step; });
+  $('cprev').addEventListener('click', () => { tgt = -(Math.round(-rot / step) - 1) * step; });
+  addEventListener('resize', layout);
+
+  window.rebuildCar = () => {
+    LIST = carList();
+    N = LIST.length;
+    step = 360 / N;
+    build();
+    layout();
+    front = -1;
+  };
+
+  build();
+  layout();
+  frame();
 })();
 
 // ---- marquee: speed and skew follow scroll velocity ----
@@ -2349,6 +2459,7 @@ function buildChips(){
 }
 function setFocus(n){focusN=n&&n!==T?n:null;sel=null;panel.innerHTML='<p class="mt">اختر فردًا من الشجرة لتعرف نسبه وصلته بك.</p>';render();window.rebuildCar&&window.rebuildCar();setTimeout(()=>autoFitTree(true),60);}
 function render(){
+  if (window.innerWidth <= 768) { mode = 'tree'; }
   cancelAnimationFrame(netRaf);if(focusN&&!ALL.includes(focusN))focusN=null;
   buildTabs();buildChips();$('vhint').textContent=VIEWS.find(v=>v[0]===mode)[3];
   svg.hidden=!SVGV.includes(mode);const fullscreenSupported=mode==='tree'||SVGV.includes(mode);$('mapOpen').hidden=!fullscreenSupported;if(scr.classList.contains('map-fullscreen')&&!fullscreenSupported)closeMapFullscreen();$('netControls').classList.toggle('active',mode==='net');ht.hidden=mode!=='tree';gens.hidden=!(mode==='g'||mode==='b');$('cards').hidden=mode!=='cards';scr.hidden=mode==='cards';$('zm').hidden=['cards','g','b'].includes(mode);
