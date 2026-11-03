@@ -1101,6 +1101,11 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
   <div class="word" id="word" aria-hidden="true">آل راضي</div>
   <nav class="cols"><a href="#about">عن العائلة</a><a href="#stack">الأجيال</a><a href="#tree">شجرة النسب</a><a href="#ring">أفراد العائلة</a><a href="#features">المميزات</a><a href="#contribute">طلب تحديث</a><a href="#faq">الأسئلة</a></nav>
   <small>حكاية كل عيلة تستاهل تتحفظ. · <span id="adminSecretTrigger" class="admin-secret-trigger" onclick="window.adminGate()" role="button" tabindex="0" title="بوابة الإدارة والمراجعة">سجل عائلة آل راضي</span></small>
+
+  <small class="footer-copyright" style="display:block;margin-top:0.75rem;padding:0.4rem 1rem;color:#8DA08F;font-size:0.78rem;text-align:center;direction:rtl;letter-spacing:0.02em;opacity:0.85;">
+    جميع حقوق محفوظة &copy; 2026 &middot; تم بواسطه
+    <a href="https://radyahmed.vercel.app/" target="_blank" rel="noopener noreferrer" style="color:#C8A04A;text-decoration:none;font-weight:700;border-bottom:1px solid #C8A04A44;padding-bottom:1px;transition:color .2s,border-color .2s;" onmouseover="this.style.color='#e8c06a';this.style.borderColor='#e8c06a'" onmouseout="this.style.color='#C8A04A';this.style.borderColor='#C8A04A44'">Eng: Rady Ahmed</a>
+  </small>
 </footer>
 
 <div class="pc" id="pc" hidden role="dialog" aria-modal="true" aria-label="بطاقة فرد"><button class="pcx" id="pcx" aria-label="إغلاق">×</button>
@@ -2210,33 +2215,46 @@ function closeMapFullscreen(){stopCinema(true);if(cinemaProgress){cinemaProgress
 function autoFitTree(animate = true) {
   if (mode === 'tree') {
     ht.style.zoom = 1;
-    // Calculate width of the rendered hierarchical tree
     const contentW = Math.max(ht.scrollWidth, ht.getBoundingClientRect().width, 1);
     const contentH = Math.max(ht.scrollHeight, ht.getBoundingClientRect().height, 1);
     const scrW = scr.clientWidth || window.innerWidth;
     const scrH = scr.clientHeight || 450;
+    const isMobile = scrW < 650 || window.innerWidth < 650;
 
-    // Safety padding for mobile viewports
-    const pad = scrW < 600 ? 16 : 36;
-    let targetZoom = (scrW - pad) / contentW;
-
-    // Intelligent zoom clamp based on branch density:
-    // For small sub-branches (e.g. 3-8 people), do not exceed 1.15 so cards look natural
-    // For large tree/branches (50+ people), scale down as far as 0.26 so the entire width fits
-    targetZoom = Math.min(1.15, Math.max(0.26, targetZoom));
+    let targetZoom = 1;
+    if (isMobile) {
+      // 📱 MOBILE GOLDEN SCALE: Always stay at 100% natural, crisp, legible size!
+      // Never shrink down to microscopic ants!
+      targetZoom = 0.95;
+    } else {
+      const pad = 36;
+      targetZoom = Math.min(1.15, Math.max(0.48, (scrW - pad) / contentW));
+    }
 
     setZoom(targetZoom);
 
-    // Center the branch in the viewport
+    // Smoothly center the active node / root in viewport
     setTimeout(() => {
-      const actualW = ht.scrollWidth * targetZoom;
-      const targetLeft = Math.max(0, (actualW - scrW) / 2);
-      scr.scrollTo({
-        left: targetLeft,
-        top: 0,
-        behavior: animate ? 'smooth' : 'auto'
-      });
-    }, 50);
+      const activeEl = ht.querySelector('.sel') || ht.querySelector('.root') || ht.querySelector('.p');
+      if (activeEl) {
+        const elRect = activeEl.getBoundingClientRect();
+        const scrRect = scr.getBoundingClientRect();
+        const currentScroll = scr.scrollLeft;
+        const diff = (elRect.left + elRect.width / 2) - (scrRect.left + scrRect.width / 2);
+        scr.scrollTo({
+          left: currentScroll + diff,
+          top: 0,
+          behavior: animate ? 'smooth' : 'auto'
+        });
+      } else {
+        const actualW = ht.scrollWidth * targetZoom;
+        scr.scrollTo({
+          left: Math.max(0, (actualW - scrW) / 2),
+          top: 0,
+          behavior: animate ? 'smooth' : 'auto'
+        });
+      }
+    }, 70);
   } else if (!svg.hidden) {
     const width = +svg.dataset.w || 1000;
     const scrW = scr.clientWidth || window.innerWidth;
@@ -4351,6 +4369,233 @@ svg { overflow: visible; }
   }
 }
 
+
+
+
+.scroller.map-fullscreen {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100svh !important;
+  max-height: 100svh !important;
+  z-index: 99999 !important;
+  background: #06181D !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+
+/* ── FLAWLESS TREE LAYOUT & CROSS-BROWSER SCROLL CENTERING ── */
+.nt {
+  direction: ltr !important;
+  display: inline-block !important;
+  width: max-content !important;
+  min-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 2rem 2.5rem 5rem !important;
+  text-align: center !important;
+}
+.nt ul {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 22px 0 0 !important;
+  position: relative !important;
+  display: flex !important;
+  justify-content: center !important;
+  width: 100% !important;
+}
+.nt>ul { padding-top: 0 !important; }
+.nt li {
+  position: relative !important;
+  padding: 22px 12px 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+.nt>ul>li { padding-top: 0 !important; }
+
+.col {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  direction: rtl !important;
+}
+
+/* Original Golden Lines in LTR */
+.nt li::before, .nt li::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  right: 50% !important;
+  width: 50% !important;
+  height: 22px !important;
+  border-top: 2.5px solid #C8A04A !important;
+}
+.nt li::after {
+  right: auto !important;
+  left: 50% !important;
+  border-left: 2.5px solid #C8A04A !important;
+}
+.nt li:only-child::before, .nt li:only-child::after { display: none !important; }
+.nt li:only-child { padding-top: 0 !important; }
+.nt li:first-child::before { border: 0 none !important; }
+.nt li:last-child::after { border: 0 none !important; }
+.nt li:last-child::before { border-right: 2.5px solid #C8A04A !important; border-radius: 0 8px 0 0 !important; }
+.nt li:first-child::after { border-radius: 8px 0 0 0 !important; }
+.nt ul ul::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 50% !important;
+  height: 22px !important;
+  border-left: 2.5px solid #C8A04A !important;
+}
+.nt>ul>li::before, .nt>ul>li::after { display: none !important; }
+
+/* In mobile fullscreen map, clean up UI */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   👑 MOBILE TREE PERFECTION: CRISP, LARGE, LUXURIOUS NODES & PURE COMFORT
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 680px) {
+  /* Scroller container */
+  .scroller {
+    height: 64svh !important;
+    min-height: 480px !important;
+    max-height: 620px !important;
+    background: radial-gradient(circle at 50% 20%, #0D3238 0%, #06181D 100%) !important;
+    border: 2px solid #C8A04A !important;
+    border-radius: 24px !important;
+    box-shadow: inset 0 0 35px rgba(0,0,0,0.8), 0 10px 35px rgba(0,0,0,0.5) !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Tree container inside scroller */
+  .nt {
+    padding: 2rem 1.5rem 4.5rem !important;
+    width: max-content !important;
+    min-width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  /* Individual Person Node Card */
+  .nt .p {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.55rem !important;
+    min-width: 125px !important;
+    max-width: 210px !important;
+    padding: 0.5rem 0.95rem 0.5rem 0.65rem !important;
+    border-radius: 999px !important;
+    background: #082126 !important;
+    border: 2px solid #C8A04A !important;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.5) !important;
+    cursor: pointer !important;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s !important;
+  }
+  .nt .p:active {
+    transform: scale(0.92) !important;
+    background: #0E3E47 !important;
+  }
+  .nt .p b {
+    font-family: "Aref Ruqaa", serif !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    color: #F3E5AB !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0.3px !important;
+  }
+
+  /* Avatar / Initial circle */
+  .nt .p .pv {
+    width: 2.2rem !important;
+    height: 2.2rem !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    border-radius: 50% !important;
+    border: 1.5px solid #F3E5AB !important;
+    background: linear-gradient(135deg, #C8A04A, #9A772C) !important;
+    color: #071B1F !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Root node (راضي) */
+  .nt .p.root {
+    background: linear-gradient(135deg, #0E4B4F, #06181D) !important;
+    border: 2.5px solid #F3E5AB !important;
+    box-shadow: 0 0 25px rgba(200, 160, 74, 0.65), 0 6px 20px rgba(0,0,0,0.5) !important;
+    padding: 0.65rem 1.35rem 0.65rem 0.85rem !important;
+    min-width: 145px !important;
+  }
+  .nt .p.root b {
+    font-size: 1.55rem !important;
+    color: #FFFFFF !important;
+    text-shadow: 0 0 10px rgba(200,160,74,0.6) !important;
+  }
+  .nt .p.root .pv {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    font-size: 1.45rem !important;
+  }
+
+  /* Expand / Collapse Button */
+  .bdg {
+    min-height: 34px !important;
+    padding: 0.3rem 0.85rem !important;
+    font-size: 0.88rem !important;
+    font-weight: 700 !important;
+    background: rgba(7, 27, 31, 0.95) !important;
+    border: 1.5px solid #C8A04A !important;
+    color: #F3E5AB !important;
+    border-radius: 999px !important;
+    margin-top: 0.5rem !important;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.4) !important;
+    cursor: pointer !important;
+    user-select: none !important;
+  }
+  .bdg:active {
+    transform: scale(0.92) !important;
+    background: #C8A04A !important;
+    color: #071B1F !important;
+  }
+
+  /* Golden connectors */
+  .nt ul {
+    padding-top: 26px !important;
+  }
+  .nt li {
+    padding: 26px 10px 0 !important;
+  }
+  .nt li::before, .nt li::after {
+    border-top: 2.5px solid #C8A04A !important;
+    height: 26px !important;
+  }
+  .nt li::after {
+    border-left: 2.5px solid #C8A04A !important;
+  }
+  .nt li:last-child::before {
+    border-right: 2.5px solid #C8A04A !important;
+  }
+  .nt ul ul::before {
+    height: 26px !important;
+    border-left: 2.5px solid #C8A04A !important;
+  }
+
+  /* Hide useless desktop-only buttons on mobile */
+  #tpr, #texp, #tedit, #tkin {
+    display: none !important;
+  }
+
+  /* Ensure floating bottom nav doesn't cover tree content */
+  #tree {
+    padding-bottom: 5.5rem !important;
+  }
+}
+
 /* ── ALL GENERATION NAMES GRID & CARDS STYLING ── */
 .card {
   grid-template-columns: 1fr 1.35fr !important;
@@ -5421,6 +5666,16 @@ if (navTrack) {
 // ═══════════════════════════════════════════════════════════════════════════
 // RESET TO ORIGINAL VIEW (شجرة الأصل الأولية كما فُتح الموقع)
 // ═══════════════════════════════════════════════════════════════════════════
+
+function centerTreeOnNode(el, animate = true) {
+  if (!el || !scr) return;
+  const elRect = el.getBoundingClientRect();
+  const scrRect = scr.getBoundingClientRect();
+  const diff = (elRect.left + elRect.width / 2) - (scrRect.left + scrRect.width / 2);
+  scr.scrollBy({ left: diff, top: 0, behavior: animate ? 'smooth' : 'auto' });
+}
+window.centerTreeOnNode = centerTreeOnNode;
+
 function resetToOriginalView() {
   if (typeof stopProgressiveCinema === 'function') stopProgressiveCinema();
   mode = 'tree';
