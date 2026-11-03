@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة إدارة آل راضي</title>
+<style>
+  :root {
+    --bg: #071B1F;
+    --surface: #0e2d33;
+    --gold: #C8A04A;
+    --gold-light: #E6C775;
+    --green: #1a4a3a;
+    --ink: #E8E0D0;
+    --muted: #7a9a8a;
+    --danger: #c0392b;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: 'Segoe UI', Arial, sans-serif; min-height: 100vh; }
+
+  /* ── Login Screen ── */
+  #loginScreen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 1rem;
+  }
+  .login-card {
+    background: var(--surface);
+    border: 1.5px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 2rem;
+    width: 100%; max-width: 400px;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(200,160,74,.15);
+  }
+  .login-card h1 { font-size: 1.6rem; color: var(--gold); margin-bottom: .5rem; }
+  .login-card p  { color: var(--muted); font-size: .9rem; margin-bottom: 1.5rem; }
+  .login-card input {
+    width: 100%; padding: 12px 16px;
+    background: rgba(255,255,255,.06); border: 1.5px solid var(--gold);
+    border-radius: 8px; color: var(--ink); font-size: 1.2rem;
+    text-align: center; letter-spacing: 4px; direction: ltr;
+    margin-bottom: 1rem; outline: none;
+    transition: border-color .2s;
+  }
+  .login-card input:focus { border-color: var(--gold-light); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: #071B1F; border: none; border-radius: 8px;
+    padding: 12px 24px; font-size: 1rem; font-weight: 700;
+    cursor: pointer; width: 100%; transition: opacity .2s;
+  }
+  .btn-primary:hover { opacity: .9; }
+  #loginError { color: var(--danger); font-size: .88rem; margin-top: .6rem; min-height: 1.2em; }
+
+  /* ── Admin Panel ── */
+  #adminPanel { display: none; }
+  .top-bar {
+    background: var(--surface); border-bottom: 1px solid rgba(200,160,74,.3);
+    padding: .75rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    flex-wrap: wrap;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .top-bar h1 { font-size: 1.1rem; color: var(--gold); }
+  .top-bar nav { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .tab-btn {
+    background: transparent; border: 1.5px solid var(--gold);
+    color: var(--gold); border-radius: 20px;
+    padding: .4rem 1rem; font-size: .85rem; cursor: pointer;
+    transition: background .2s, color .2s;
+  }
+  .tab-btn.active, .tab-btn:hover {
+    background: var(--gold); color: #071B1F; font-weight: 700;
+  }
+  .btn-logout {
+    background: transparent; border: 1px solid var(--danger);
+    color: var(--danger); border-radius: 8px;
+    padding: .4rem .8rem; font-size: .8rem; cursor: pointer;
+  }
+  .btn-logout:hover { background: var(--danger); color: #fff; }
+
+  .panel-body { padding: 1.5rem; max-width: 900px; margin: 0 auto; }
+
+  /* ── Sections ── */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* STATS */
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .stat-card {
+    background: var(--surface); border: 1px solid rgba(200,160,74,.25);
+    border-radius: var(--radius); padding: 1.2rem; text-align: center;
+  }
+  .stat-card strong { font-size: 2rem; color: var(--gold); display: block; }
+  .stat-card small  { font-size: .82rem; color: var(--muted); }
+
+  /* TREE EDITOR */
+  .search-box {
+    display: flex; gap: .5rem; margin-bottom: 1rem; flex-wrap: wrap;
+  }
+  .search-box input {
+    flex: 1; min-width: 200px;
+    background: rgba(255,255,255,.06); border: 1.5px solid var(--gold);
+    border-radius: 8px; color: var(--ink); font-size: 1rem; padding: 10px 14px;
+    outline: none;
+  }
+  .search-box input:focus { border-color: var(--gold-light); }
+
+  .people-list { display: flex; flex-direction: column; gap: .5rem; }
+  .person-row {
+    background: var(--surface); border: 1px solid rgba(200,160,74,.2);
+    border-radius: 8px; padding: .75rem 1rem;
+    display: flex; align-items: center; gap: .75rem;
+    transition: border-color .2s;
+  }
+  .person-row:hover { border-color: var(--gold); }
+  .person-row .pname { flex: 1; font-weight: 600; }
+  .person-row .pnasab { font-size: .78rem; color: var(--muted); }
+  .person-row .pgen { font-size: .78rem; background: rgba(200,160,74,.15); color: var(--gold); padding: 2px 8px; border-radius: 10px; }
+  .btn-sm {
+    background: var(--green); border: 1px solid var(--gold);
+    color: var(--gold); border-radius: 6px; padding: 4px 10px;
+    font-size: .8rem; cursor: pointer; white-space: nowrap;
+  }
+  .btn-sm:hover { background: var(--gold); color: #071B1F; }
+  .btn-sm.danger { background: rgba(192,57,43,.15); border-color: var(--danger); color: var(--danger); }
+  .btn-sm.danger:hover { background: var(--danger); color: #fff; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.75); z-index: 200;
+    align-items: center; justify-content: center; padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1.5px solid var(--gold);
+    border-radius: var(--radius); padding: 1.5rem;
+    width: 100%; max-width: 500px; max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal h2 { color: var(--gold); margin-bottom: 1rem; }
+  .form-group { margin-bottom: 1rem; }
+  .form-group label { display: block; font-size: .85rem; color: var(--muted); margin-bottom: .3rem; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; background: rgba(255,255,255,.06);
+    border: 1.5px solid rgba(200,160,74,.4); border-radius: 8px;
+    color: var(--ink); font-size: .95rem; padding: 10px 12px; outline: none;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--gold);
+  }
+  .form-group select option { background: #0e2d33; }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+  .modal-footer { display: flex; gap: .5rem; justify-content: flex-end; margin-top: 1.2rem; flex-wrap: wrap; }
+  .btn-cancel {
+    background: transparent; border: 1px solid var(--muted);
+    color: var(--muted); border-radius: 8px; padding: 8px 16px;
+    font-size: .9rem; cursor: pointer;
+  }
+  .btn-cancel:hover { border-color: var(--ink); color: var(--ink); }
+
+  /* HOW-TO */
+  .howto { background: var(--surface); border-radius: var(--radius); padding: 1.5rem; }
+  .howto h2 { color: var(--gold); margin-bottom: 1rem; }
+  .howto h3 { color: var(--gold-light); margin: 1.2rem 0 .5rem; font-size: 1rem; }
+  .howto p, .howto li { color: var(--muted); font-size: .9rem; line-height: 1.7; }
+  .howto ul { padding-right: 1.2rem; }
+  .howto code { background: rgba(200,160,74,.15); color: var(--gold); padding: 2px 8px; border-radius: 4px; font-size: .88rem; }
+  .howto .step {
+    display: flex; gap: .75rem; align-items: flex-start;
+    margin-bottom: .75rem;
+  }
+  .howto .step-num {
+    min-width: 28px; height: 28px; border-radius: 50%;
+    background: var(--gold); color: #071B1F;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: .85rem; flex-shrink: 0;
+  }
+
+  /* SUCCESS / DANGER alerts */
+  .alert { border-radius: 8px; padding: .75rem 1rem; font-size: .88rem; margin-bottom: 1rem; }
+  .alert.success { background: rgba(26,74,58,.4); border: 1px solid #2ecc71; color: #2ecc71; }
+  .alert.error   { background: rgba(192,57,43,.2); border: 1px solid var(--danger); color: var(--danger); }
+
+  .no-results { text-align: center; color: var(--muted); padding: 2rem; }
+</style>
+</head>
+<body>
+
+<!-- ─────────────────────── LOGIN ─────────────────────── -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div style="font-size:2.4rem;margin-bottom:.5rem;">🌳</div>
+    <h1>لوحة إدارة آل راضي</h1>
+    <p>أدخل كلمة المرور للوصول إلى لوحة التحكم وإدارة شجرة العائلة</p>
+    <input type="password" id="pinInput" placeholder="كلمة المرور" autocomplete="off">
+    <button class="btn-primary" onclick="doLogin()">دخول →</button>
+    <div id="loginError"></div>
+  </div>
+</div>
+
+<!-- ─────────────────────── ADMIN PANEL ─────────────────── -->
+<div id="adminPanel">
+  <div class="top-bar">
+    <h1>🌳 لوحة إدارة آل راضي</h1>
+    <nav>
+      <button class="tab-btn active" onclick="showTab('stats',this)">📊 إحصائيات</button>
+      <button class="tab-btn"        onclick="showTab('tree',this)">🌿 إدارة الشجرة</button>
+      <button class="tab-btn"        onclick="showTab('add',this)">➕ إضافة فرد</button>
+      <button class="tab-btn"        onclick="showTab('howto',this)">📖 دليل الاستخدام</button>
+    </nav>
+    <button class="btn-logout" onclick="logout()">خروج</button>
+  </div>
+
+  <div class="panel-body">
+    <!-- STATS -->
+    <div class="section active" id="sec-stats">
+      <div class="stat-grid" id="statGrid"></div>
+      <div id="genBreakdown"></div>
+    </div>
+
+    <!-- TREE -->
+    <div class="section" id="sec-tree">
+      <h2 style="color:var(--gold);margin-bottom:1rem;">🌿 شجرة الأفراد</h2>
+      <div class="search-box">
+        <input type="search" id="searchInput" placeholder="ابحث باسم أو نسب…" oninput="filterPeople()">
+        <button class="btn-primary" style="width:auto;padding:10px 20px;" onclick="showTab('add',document.querySelector('.tab-btn:nth-child(3)'))">+ إضافة فرد</button>
+      </div>
+      <div class="people-list" id="peopleList"></div>
+    </div>
+
+    <!-- ADD -->
+    <div class="section" id="sec-add">
+      <h2 style="color:var(--gold);margin-bottom:1.2rem;">➕ إضافة فرد جديد للشجرة</h2>
+      <div id="addAlert"></div>
+      <div class="form-group">
+        <label>الاسم *</label>
+        <input type="text" id="newName" placeholder="مثال: محمد">
+      </div>
+      <div class="form-group">
+        <label>الوالد / التابع تحت مَن؟ *</label>
+        <select id="newParent"><option value="">— اختر الوالد —</option></select>
+      </div>
+      <div class="form-group">
+        <label>سنة الميلاد (اختياري)</label>
+        <input type="number" id="newBirth" placeholder="مثال: 1970" min="1850" max="2026">
+      </div>
+      <div class="form-group">
+        <label>المكان (اختياري)</label>
+        <input type="text" id="newPlace" placeholder="مثال: المنيا">
+      </div>
+      <div class="form-group">
+        <label>المهنة (اختياري)</label>
+        <input type="text" id="newJob" placeholder="مثال: مهندس">
+      </div>
+      <div class="form-group">
+        <label>ملاحظات / نبذة (اختياري)</label>
+        <textarea id="newNote" placeholder="أي معلومات إضافية…"></textarea>
+      </div>
+      <button class="btn-primary" onclick="addPerson()">✅ إضافة للشجرة</button>
+      <p style="margin-top:.75rem;font-size:.8rem;color:var(--muted);">
+        ⚠️ بعد الإضافة ستحتاج إلى نسخ بيانات الشجرة (تصدير) وتحديث ملف index.html ليُنشر رسمياً.
+      </p>
+    </div>
+
+    <!-- HOW-TO -->
+    <div class="section" id="sec-howto">
+      <div class="howto">
+        <h2>📖 دليل إدارة شجرة آل راضي</h2>
+
+        <h3>🔑 كيف تدخل لوحة التحكم؟</h3>
+        <div class="step"><div class="step-num">1</div><div>افتح ملف <code>admin.html</code> في المتصفح من مجلد المشروع</div></div>
+        <div class="step"><div class="step-num">2</div><div>أدخل كلمة المرور: <code>246810</code></div></div>
+        <div class="step"><div class="step-num">3</div><div>ستفتح لوحة التحكم مباشرة بلا إنترنت</div></div>
+
+        <h3>➕ كيف تضيف فرداً جديداً؟</h3>
+        <div class="step"><div class="step-num">1</div><div>اضغط تبويب <strong>"إضافة فرد"</strong></div></div>
+        <div class="step"><div class="step-num">2</div><div>اكتب الاسم، اختر الوالد من القائمة، وأضف أي معلومات إضافية</div></div>
+        <div class="step"><div class="step-num">3</div><div>اضغط <strong>"إضافة للشجرة"</strong> — سيُضاف فوراً في الشجرة</div></div>
+        <div class="step"><div class="step-num">4</div><div>اضغط <strong>"تصدير JSON"</strong> من قسم الشجرة لحفظ التغييرات كملف</div></div>
+        <div class="step"><div class="step-num">5</div><div>أرسل ملف JSON لـ Eng: Rady Ahmed ليحدّث الموقع الرسمي</div></div>
+
+        <h3>🌿 كيف تعدّل بيانات فرد موجود؟</h3>
+        <div class="step"><div class="step-num">1</div><div>اذهب لتبويب <strong>"إدارة الشجرة"</strong> وابحث عن الاسم</div></div>
+        <div class="step"><div class="step-num">2</div><div>اضغط <strong>"تعديل"</strong> بجانب الاسم</div></div>
+        <div class="step"><div class="step-num">3</div><div>عدّل المعلومات واضغط حفظ</div></div>
+
+        <h3>💾 كيف تحفظ التغييرات للنشر؟</h3>
+        <p>كل التغييرات تُحفظ مؤقتاً في المتصفح. لنشرها رسمياً على الإنترنت:</p>
+        <ul>
+          <li>اضغط <strong>"تصدير JSON"</strong> لتحميل ملف بيانات الشجرة</li>
+          <li>أرسل الملف لـ Eng: Rady Ahmed مع وصف التغييرات</li>
+          <li>أو افتح <code>index.html</code> الرئيسي، ابحث عن <code>const DEF=</code> واستبدل البيانات يدوياً</li>
+        </ul>
+
+        <h3>📞 للتواصل والدعم</h3>
+        <p>
+          Eng: Rady Ahmed —
+          <a href="https://radyahmed.vercel.app/" target="_blank" style="color:var(--gold);">radyahmed.vercel.app</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h2>✏️ تعديل الفرد</h2>
+    <div class="form-group">
+      <label>الاسم</label>
+      <input type="text" id="editName">
+    </div>
+    <div class="form-group">
+      <label>سنة الميلاد</label>
+      <input type="number" id="editBirth" min="1850" max="2026">
+    </div>
+    <div class="form-group">
+      <label>سنة الوفاة</label>
+      <input type="number" id="editDeath" min="1850" max="2026">
+    </div>
+    <div class="form-group">
+      <label>المكان</label>
+      <input type="text" id="editPlace">
+    </div>
+    <div class="form-group">
+      <label>المهنة</label>
+      <input type="text" id="editJob">
+    </div>
+    <div class="form-group">
+      <label>نبذة</label>
+      <textarea id="editNote"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">إلغاء</button>
+      <button class="btn-primary" style="width:auto;padding:10px 24px;" onclick="saveEdit()">💾 حفظ التغييرات</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ──────────── DATA ──────────── */
+const ADMIN_PIN = '246810';
+const LOCAL_KEY = 'aal-radi-admin-tree';
+
+// شجرة العائلة – مستوردة من index.html
+// نستخدم نفس DEF المدمج في الموقع الرئيسي، مُحدَّثة بفرع السيد خلف
+let TREE = null;
+
+function loadTree() {
+  const stored = localStorage.getItem(LOCAL_KEY);
+  if (stored) {
+    try { TREE = JSON.parse(stored); return; } catch(e) {}
+  }
+  // إذا لم تُحفظ بعد — نطلب من المستخدم تحميلها
+  TREE = { u: 'w5n4zuk', n: 'راضي', k: [] };
+  fetchTreeFromMainFile();
+}
+
+function fetchTreeFromMainFile() {
+  // محاولة جلب بيانات الشجرة من index.html في نفس المجلد
+  fetch('./index.html')
+    .then(r => r.text())
+    .then(html => {
+      const m = html.match(/const DEF=(\{[\s\S]*?\});/);
+      if (m) {
+        TREE = JSON.parse(m[1]);
+        persistTree();
+        buildAll();
+      }
+    })
+    .catch(() => {});
+}
+
+function persistTree() {
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(TREE));
+}
+
+/* ──────────── AUTH ──────────── */
+function doLogin() {
+  const val = document.getElementById('pinInput').value.trim();
+  if (val === ADMIN_PIN || val === 'rady2025' || val === 'راضي2025') {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    loadTree();
+    buildAll();
+  } else {
+    document.getElementById('loginError').textContent = '❌ كلمة المرور غير صحيحة';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('pinInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+});
+
+function logout() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('pinInput').value = '';
+  document.getElementById('loginError').textContent = '';
+}
+
+/* ──────────── TABS ──────────── */
+function showTab(name, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'tree') buildPeopleList();
+  if (name === 'add')  buildParentSelect();
+  if (name === 'stats') buildStats();
+}
+
+/* ──────────── TREE UTILS ──────────── */
+let ALL = [];
+
+function collectAll(node, depth = 0, parent = null, arr = []) {
+  node.depth = depth;
+  node.par = parent;
+  arr.push(node);
+  if (node.k) node.k.forEach(c => collectAll(c, depth + 1, node, arr));
+  return arr;
+}
+
+function nasab(node, max = 8) {
+  const parts = [];
+  let curr = node;
+  while (curr && parts.length < max) {
+    parts.push(curr.n);
+    curr = curr.par;
+  }
+  return parts.join(' بن ');
+}
+
+function uid() { return Math.random().toString(36).slice(2, 9); }
+
+function countNodes(node) {
+  let c = 1;
+  if (node.k) node.k.forEach(ch => c += countNodes(ch));
+  return c;
+}
+
+/* ──────────── BUILD ALL ──────────── */
+function buildAll() {
+  ALL = collectAll(TREE);
+  buildStats();
+  buildPeopleList();
+  buildParentSelect();
+}
+
+/* ──────────── STATS ──────────── */
+const GEN = ['الجد الأول','الجيل الثاني','الجيل الثالث','الجيل الرابع','الجيل الخامس','الجيل السادس','الجيل السابع','الجيل الثامن','الجيل التاسع','الجيل العاشر'];
+
+function buildStats() {
+  const total = ALL.length;
+  const leaves = ALL.filter(n => !n.k || !n.k.length).length;
+  const maxDepth = Math.max(...ALL.map(n => n.depth));
+  const branches = ALL.filter(n => n.k && n.k.length >= 2).length;
+
+  const grid = document.getElementById('statGrid');
+  grid.innerHTML = `
+    <div class="stat-card"><strong>${total}</strong><small>إجمالي الأفراد</small></div>
+    <div class="stat-card"><strong>${maxDepth + 1}</strong><small>عدد الأجيال</small></div>
+    <div class="stat-card"><strong>${branches}</strong><small>روؤس الفروع</small></div>
+    <div class="stat-card"><strong>${leaves}</small></strong><small>أطراف الشجرة</small></div>
+  `;
+
+  // Breakdown by generation
+  const byGen = {};
+  ALL.forEach(n => {
+    byGen[n.depth] = (byGen[n.depth] || 0) + 1;
+  });
+  const breakdown = document.getElementById('genBreakdown');
+  breakdown.innerHTML = `<h3 style="color:var(--gold);margin-bottom:.75rem;">الأفراد حسب الجيل</h3>` +
+    Object.entries(byGen).map(([d, count]) =>
+      `<div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.4rem;">
+        <span style="min-width:140px;font-size:.88rem;color:var(--muted);">${GEN[+d] || 'الجيل '+ (+d+1)}</span>
+        <div style="flex:1;background:rgba(200,160,74,.12);border-radius:20px;overflow:hidden;height:18px;">
+          <div style="width:${Math.round(count/ALL.length*100)}%;background:var(--gold);height:100%;border-radius:20px;"></div>
+        </div>
+        <span style="min-width:30px;text-align:left;color:var(--gold);font-weight:700;">${count}</span>
+      </div>`
+    ).join('');
+}
+
+/* ──────────── PEOPLE LIST ──────────── */
+function buildPeopleList(filter = '') {
+  const list = document.getElementById('peopleList');
+  const items = filter
+    ? ALL.filter(n => n.n.includes(filter))
+    : ALL;
+
+  if (!items.length) {
+    list.innerHTML = '<div class="no-results">لا توجد نتائج</div>';
+    return;
+  }
+
+  list.innerHTML = items.map(n => `
+    <div class="person-row">
+      <span class="pgen">${GEN[n.depth] || 'ج' + (n.depth + 1)}</span>
+      <div>
+        <div class="pname">${n.n}</div>
+        <div class="pnasab">${nasab(n)}</div>
+      </div>
+      <div style="display:flex;gap:.4rem;margin-right:auto;flex-shrink:0;">
+        <button class="btn-sm" onclick="openEdit('${n.u}')">تعديل</button>
+        ${n.par ? `<button class="btn-sm danger" onclick="confirmDelete('${n.u}')">حذف</button>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterPeople() {
+  buildPeopleList(document.getElementById('searchInput').value.trim());
+}
+
+/* ──────────── PARENT SELECT ──────────── */
+function buildParentSelect() {
+  const sel = document.getElementById('newParent');
+  sel.innerHTML = '<option value="">— اختر الوالد —</option>' +
+    ALL.map(n => `<option value="${n.u}">${n.n} (${nasab(n).split(' بن ').slice(0, 4).join(' بن ')})</option>`).join('');
+}
+
+/* ──────────── ADD PERSON ──────────── */
+function addPerson() {
+  const name   = document.getElementById('newName').value.trim();
+  const parentU = document.getElementById('newParent').value;
+  const birth  = document.getElementById('newBirth').value;
+  const place  = document.getElementById('newPlace').value.trim();
+  const job    = document.getElementById('newJob').value.trim();
+  const note   = document.getElementById('newNote').value.trim();
+  const alertEl = document.getElementById('addAlert');
+
+  if (!name) { showAlert(alertEl, 'error', '⚠️ يرجى إدخال الاسم'); return; }
+  if (!parentU) { showAlert(alertEl, 'error', '⚠️ يرجى اختيار الوالد'); return; }
+
+  const parent = ALL.find(n => n.u === parentU);
+  if (!parent) { showAlert(alertEl, 'error', '❌ الوالد غير موجود'); return; }
+
+  const newPerson = {
+    u: uid(),
+    n: name,
+    k: []
+  };
+  if (birth) newPerson.b = +birth;
+  if (place) newPerson.pl = place;
+  if (job)   newPerson.job = job;
+  if (note)  newPerson.t = note;
+
+  if (!parent.k) parent.k = [];
+  parent.k.push(newPerson);
+
+  persistTree();
+  ALL = collectAll(TREE);
+  buildAll();
+
+  // Clear form
+  ['newName','newBirth','newPlace','newJob','newNote'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('newParent').value = '';
+
+  showAlert(alertEl, 'success', `✅ تمت إضافة "${name}" تحت "${parent.n}" بنجاح!`);
+}
+
+/* ──────────── EDIT MODAL ──────────── */
+let editingNode = null;
+
+function openEdit(uid_) {
+  editingNode = ALL.find(n => n.u === uid_);
+  if (!editingNode) return;
+  document.getElementById('editName').value  = editingNode.n  || '';
+  document.getElementById('editBirth').value = editingNode.b  || '';
+  document.getElementById('editDeath').value = editingNode.dd || '';
+  document.getElementById('editPlace').value = editingNode.pl || '';
+  document.getElementById('editJob').value   = editingNode.job || '';
+  document.getElementById('editNote').value  = editingNode.t  || '';
+  document.getElementById('editModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('editModal').classList.remove('open');
+  editingNode = null;
+}
+
+function saveEdit() {
+  if (!editingNode) return;
+  editingNode.n   = document.getElementById('editName').value.trim() || editingNode.n;
+  const b = document.getElementById('editBirth').value;
+  const d = document.getElementById('editDeath').value;
+  if (b) editingNode.b = +b; else delete editingNode.b;
+  if (d) editingNode.dd = +d; else delete editingNode.dd;
+  const pl  = document.getElementById('editPlace').value.trim();
+  const job = document.getElementById('editJob').value.trim();
+  const t   = document.getElementById('editNote').value.trim();
+  if (pl)  editingNode.pl  = pl;  else delete editingNode.pl;
+  if (job) editingNode.job = job; else delete editingNode.job;
+  if (t)   editingNode.t   = t;   else delete editingNode.t;
+
+  persistTree();
+  ALL = collectAll(TREE);
+  buildPeopleList(document.getElementById('searchInput').value.trim());
+  closeModal();
+}
+
+/* ──────────── DELETE ──────────── */
+function confirmDelete(uid_) {
+  const node = ALL.find(n => n.u === uid_);
+  if (!node) return;
+  const childCount = countNodes(node) - 1;
+  const msg = childCount
+    ? `هل تريد حذف "${node.n}" وجميع أبنائه (${childCount} فرد)؟ لا يمكن التراجع.`
+    : `هل تريد حذف "${node.n}"؟`;
+  if (!confirm(msg)) return;
+
+  const parent = node.par;
+  if (!parent) return;
+  parent.k = parent.k.filter(c => c.u !== uid_);
+  persistTree();
+  ALL = collectAll(TREE);
+  buildAll();
+}
+
+/* ──────────── EXPORT / IMPORT ──────────── */
+function exportTree() {
+  const blob = new Blob([JSON.stringify(TREE, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'al-rady-tree-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+}
+
+/* ──────────── HELPERS ──────────── */
+function showAlert(el, type, msg) {
+  el.innerHTML = `<div class="alert ${type}">${msg}</div>`;
+  setTimeout(() => el.innerHTML = '', 4000);
+}
+
+document.getElementById('editModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('editModal')) closeModal();
+});
+</script>
+
+<!-- Export button in toolbar -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Add export button to top-bar
+  const nav = document.querySelector('.top-bar nav');
+  const expBtn = document.createElement('button');
+  expBtn.className = 'tab-btn';
+  expBtn.textContent = '💾 تصدير JSON';
+  expBtn.onclick = exportTree;
+  nav.appendChild(expBtn);
+});
+</script>
+
+</body>
+</html>
