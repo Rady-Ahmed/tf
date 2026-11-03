@@ -1,0 +1,19 @@
+{
+  "name": "سجل عائلة آل راضي",
+  "short_name": "آل راضي",
+  "description": "سجل وتاريخ وشجرة عائلة آل راضي التفاعلية",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#071B1F",
+  "theme_color": "#071B1F",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

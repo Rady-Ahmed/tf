@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#071B1F">
+<link rel="manifest" href="/manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="آل راضي">
+<link rel="apple-touch-icon" href="/favicon.svg">
+
 <meta property="og:type" content="website">
 <meta property="og:title" content="سجل وشجرة نسب عائلة آل راضي | AL RADY FAMILY LEGACY">
 <meta property="og:description" content="منصة رقمية لحفظ نسب وتاريخ وذكريات عائلة آل راضي · شجرة تفاعلية · سير ذاتية · صندوق تكافل · شبكة كفاءات">
@@ -1669,6 +1676,7 @@ function cardHTML(n) {
   </div>`;
 }
 function openCard(n){
+  try { history.replaceState(null, '', '#person=' + n.u); } catch(e){}
   clearTimeout(ct);cur=n;pcard.innerHTML=cardHTML(n);pcard.classList.remove('in');pcard.scrollTop=0;
   if(pc.hidden){pc.hidden=false;pst.classList.remove('open');
     requestAnimationFrame(()=>requestAnimationFrame(()=>{pc.classList.add('show');pst.classList.add('open');pcard.classList.add('in')}));$('pcx').focus()}
@@ -1951,8 +1959,16 @@ function finish(){
 }
 function buildTabs(){$('tabs').innerHTML=VIEWS.map(v=>`<button role="tab" data-m="${v[0]}" aria-selected="${v[0]===mode}" title="${v[3]}"><i>${v[1]}</i>${v[2]}</button>`).join('')}
 function buildChips(){
-  $('chips').innerHTML=`<button class="bc${!focusN?' on':''}" data-f="">كل العائلة</button>`+T.k.map(k=>`<button class="bc${focusN===k?' on':''}" data-f="${k.id}" style="${pcs(k)}"><i></i>فرع ${k.n}</button>`).join('')+
-   `<select id="fsel" aria-label="ركّز على فرع شخص"><option value="">ركّز على فرع شخص…</option>${ALL.filter(n=>n.k.length).map(n=>`<option value="${n.id}"${focusN===n?' selected':''}>${nasab(n,3)} (${ad(countN(n))})</option>`).join('')}</select>`}
+  const targetIds = ['j3ais6y', '8a55h08', 'rp3ca11', '5xut454', 'yndlsys'];
+  const branchRoots = ALL.filter(n => targetIds.includes(n.u));
+  branchRoots.sort((a,b) => countN(b) - countN(a));
+  const chipsHtml = [
+    `<button class="bc${!focusN?' on':''}" data-f="">🌟 كل الشجرة (${ad(ALL.length)})</button>`,
+    ...branchRoots.map(k => `<button class="bc${focusN===k?' on':''}" data-f="${k.id}" style="${pcs(k)}"><i></i>فرع ${k.n} (${ad(countN(k))})</button>`),
+    `<select id="fsel" aria-label="اختر فرعاً آخر للتركيز عليه"><option value="">🔍 فروع أخرى…</option>${ALL.filter(n=>n.k.length && !branchRoots.includes(n)).map(n=>`<option value="${n.id}"${focusN===n?' selected':''}>${nasab(n,3)} (${ad(countN(n))})</option>`).join('')}</select>`
+  ].join('');
+  $('chips').innerHTML = chipsHtml;
+}
 function setFocus(n){focusN=n&&n!==T?n:null;sel=null;panel.innerHTML='<p class="mt">اختر فردًا من الشجرة لتعرف نسبه وصلته بك.</p>';render();window.rebuildCar&&window.rebuildCar();setTimeout(()=>autoFitTree(true),60);}
 function render(){
   cancelAnimationFrame(netRaf);if(focusN&&!ALL.includes(focusN))focusN=null;
@@ -5927,7 +5943,7 @@ document.addEventListener('click', e => {
       (life ? ('📅 *الحياة:* ' + life + '\n') : '') +
       '📍 *المكان:* ' + (p.pl || 'شارونة، المنيا') + '\n\n' +
       '🔗 تصفح الشجرة والملف الشخصي كاملاً عبر الرابط:\n' +
-      window.location.origin + window.location.pathname
+      window.location.origin + window.location.pathname + '#person=' + cur.u
     );
     window.open('https://api.whatsapp.com/send?text=' + shareMsg, '_blank');
     return;
@@ -6406,5 +6422,26 @@ function openEditProfileModal(node, focusField = '') {
 })();
 </script>
 
+<script>
+// Deep-linking: auto open person profile from URL hash #person=UID
+function checkPersonDeepLink() {
+  const hash = window.location.hash;
+  if (hash && hash.startsWith('#person=')) {
+    const targetU = hash.replace('#person=', '').trim();
+    if (typeof ALL !== 'undefined' && ALL.length) {
+      const found = ALL.find(x => x.u === targetU);
+      if (found) {
+        setTimeout(() => {
+          openCard(found);
+          const treeEl = $('tree');
+          if (treeEl) treeEl.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+      }
+    }
+  }
+}
+window.addEventListener('DOMContentLoaded', () => setTimeout(checkPersonDeepLink, 400));
+window.addEventListener('hashchange', checkPersonDeepLink);
+</script>
 </body>
 </html>
