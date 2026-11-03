@@ -582,6 +582,33 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
   pointer-events: auto !important;
 }
 
+
+/* Golden Aura animation on active tree node */
+@keyframes pulseGoldenAura {
+  0% { box-shadow: 0 0 0 3px #C8A04A, 0 0 12px rgba(200,160,74,0.45); }
+  50% { box-shadow: 0 0 0 6px #E6C775, 0 0 24px rgba(230,199,117,0.8); }
+  100% { box-shadow: 0 0 0 3px #C8A04A, 0 0 12px rgba(200,160,74,0.45); }
+}
+.p.lit.active-target, .node.lit.active-target {
+  animation: pulseGoldenAura 1.8s infinite ease-in-out !important;
+  border-color: #E6C775 !important;
+  z-index: 25 !important;
+}
+.car-counter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(200,160,74,0.15);
+  border: 1px solid rgba(200,160,74,0.4);
+  color: #C8A04A;
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-top: 0.35rem;
+}
+
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -2188,7 +2215,12 @@ renderCards=viewCards;
 function pick(n,burst){
   sel=n;const chain=chainOf(n).reverse(),ids=new Set(chain.map(m=>m.id)),me=meN(),rm=me&&me!==n?relBetween(me,n):null;
   scr.classList.add('has-sel');scr.querySelectorAll('.lit').forEach(e=>e.classList.remove('lit'));
-  scr.querySelectorAll('[data-i]').forEach(e=>{if(ids.has(+e.dataset.i))e.classList.add('lit')});
+  scr.querySelectorAll('[data-i]').forEach(e=>{
+    const isId = ids.has(+e.dataset.i);
+    if(isId) e.classList.add('lit');
+    if(+e.dataset.i === n.id) e.classList.add('active-target');
+    else e.classList.remove('active-target');
+  });
   panel.innerHTML=`<h3 class="disp">${n.n}</h3><p class="mt">${GEN[n.d]}، ${n.sf}${n.b?'، '+n.y:''}</p><p class="mt">النسب: ${nasab(n,6)}</p>${rm?`<p class="mt">صلته بك: ${relMe(rm.d1,rm.d2)}</p>`:''}${n.t?`<p>${n.t}</p>`:''}
     <p class="acts"><button class="go o" data-open="${n.id}">افتح البطاقة</button>${n.k.length?`<button class="go o" data-focus="${n.id}">ركّز على فرعه</button>`:''}${edit?`<button class="go o" data-edit="${n.id}">تعديل</button>`:''}</p>`;
   if(burst&&n.X!=null&&!svg.hidden&&(mode==='live'||mode==='net')){const col=PAL[n.cl][0];
