@@ -401,8 +401,7 @@ button.rl:hover{background:var(--gold);color:#241A05}
 #about .about p:first-of-type{font-weight:600}
 #about .vals span{font-size:.95rem;background:color-mix(in srgb,var(--gold) 9%,var(--panel))}
 .mih p{font-size:clamp(1.8rem,4vw,2.7rem);font-weight:700;line-height:1.8}
-/* Generation cards read as a sequence; never stack over each other. */
-.stack .card,.stack.many .card{position:relative;top:auto;height:auto;min-height:360px;margin:0 auto 1.4rem;max-width:1080px;transform:none!important;}
+/* Stacking cards restored */
 .stack .card:last-child{margin-bottom:0}
 .hub-buttons{display:flex;gap:.7rem;flex-wrap:wrap;align-items:center}.wa-cta{background:#147A53;border-color:#147A53;color:#fff}.wa-cta:hover{background:#0f6847}
 .wa-float{position:fixed;z-index:80;right:1rem;bottom:calc(1rem + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:.55rem;padding:.7rem 1rem;border-radius:999px;background:#147A53;color:#fff;text-decoration:none;font-weight:700;box-shadow:0 12px 35px rgba(0,0,0,.22);transition:transform .25s,box-shadow .25s}
@@ -549,7 +548,7 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
 
 /* Final cascade overrides: entrance and generation cards behave consistently on every viewport. */
 @media(max-width:760px){.gate{height:100svh!important;min-height:560px}.gate-in{height:100svh!important;min-height:560px}.gate-in>.hero{position:absolute!important;min-height:0!important}}
-.stack .card,.stack.many .card{position:relative!important;inset:auto!important;top:auto!important;height:auto!important;min-height:360px!important;margin:0 auto 1.4rem!important;transform:none!important;will-change:auto!important;display:grid!important;align-items:center!important}
+/* Stacking cards override removed */
 .stack .card:last-child,.stack.many .card:last-child{margin-bottom:0!important}
 @media(max-width:760px){.stack .card,.stack.many .card{min-height:0!important;margin:0 auto 1rem!important;padding:1.35rem!important;grid-template-columns:1fr!important}}
 
@@ -902,6 +901,63 @@ html, body {
 /* 12. GPU-Accelerated Scroll Entrance Animations */
 .sec, .stats, .stack .card, .ar, .talent-cat-card, .pillar-card, .fatiha-box, .quiz-box {
   will-change: transform, opacity;
+}
+
+
+/* ========================================================
+   RESTORED: LUXURY 3D STACKING GENERATION CARDS (Desktop & Mobile)
+   ======================================================== */
+.stack {
+  position: relative !important;
+  padding: 6vh clamp(.75rem, 4vw, 3rem) 22vh !important;
+  isolation: isolate !important;
+}
+.stack .card, .stack.many .card {
+  position: sticky !important;
+  top: calc(85px + var(--i) * 22px) !important;
+  height: min(68vh, 520px) !important;
+  min-height: 380px !important;
+  margin: 0 auto 14vh !important;
+  max-width: 1080px !important;
+  border-radius: 28px !important;
+  transform-origin: top center !important;
+  will-change: transform !important;
+  z-index: calc(20 + var(--i)) !important;
+  opacity: 1 !important;
+  box-shadow: 0 24px 60px -20px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.15) inset !important;
+  overflow: hidden !important;
+}
+.stack .card:last-child {
+  margin-bottom: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .stack {
+    padding: 5vh 0.75rem 16vh !important;
+  }
+  .stack .card, .stack.many .card {
+    position: sticky !important;
+    top: calc(72px + var(--i) * 14px) !important;
+    height: min(68svh, 540px) !important;
+    min-height: 390px !important;
+    margin: 0 auto 11vh !important;
+    border-radius: 22px !important;
+    padding: 1.25rem !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+    z-index: calc(20 + var(--i)) !important;
+    transform-origin: top center !important;
+  }
+  .stack .card .mem {
+    max-height: 32svh !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .stack .card .num {
+    font-size: clamp(3.5rem, 18vw, 6rem) !important;
+    opacity: 0.16 !important;
+  }
 }
 
 </style>
@@ -2913,8 +2969,8 @@ $('foot').addEventListener('pointermove',e=>{const r=$('word').getBoundingClient
 @media(max-width:600px){.fa-form{grid-template-columns:1fr}.fa-diff{grid-template-columns:1fr}.fa-fab{left:12px;bottom:12px;padding:12px 16px}.fa-statgrid{grid-template-columns:1fr 1fr}}
 
 /* Final cascade overrides: keep entrance immediate and generation cards separated on every viewport. */
-@media(max-width:760px){.gate{height:100svh!important;min-height:560px}.gate-in{height:100svh!important;min-height:560px}.gate-in>.hero{position:absolute!important;min-height:0!important}.stack .card,.stack.many .card{position:relative!important;top:auto!important;height:auto!important;min-height:0!important;margin:0 auto 1rem!important;transform:none!important}}
-@media(min-width:761px){.stack .card,.stack.many .card{position:relative!important;top:auto!important;height:auto!important;min-height:360px;margin:0 auto 1.4rem!important;transform:none!important}}
+@media(max-width:760px){.gate{height:100svh!important;min-height:560px}.gate-in{height:100svh!important;min-height:560px}.gate-in>.hero{position:absolute!important;min-height:0!important}}
+
 /* Scroll-driven entrance + premium generation card stack (desktop and touch). */
 .gate{height:146svh!important;min-height:0!important;position:relative!important}
 .gate-in{position:sticky!important;top:0!important;height:100svh!important;min-height:0!important;overflow:hidden!important;isolation:isolate}
@@ -5549,7 +5605,7 @@ const storyList=$('storyl');if(storyList){stories.slice().reverse().forEach(s=>{
 // Lightweight scroll reveals; content remains visible if IntersectionObserver is unavailable.
 (function(){
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const targets=[...document.querySelectorAll('.sec, .stats, .stack .card, .band, .foot')];
+  const targets=[...document.querySelectorAll('.sec, .stats, .band, .foot')];
   targets.forEach((el,i)=>{el.classList.add('reveal');if(i%4)el.dataset.delay=String(i%4)});
   if(!('IntersectionObserver' in window)){targets.forEach(el=>el.classList.add('is-visible'));return;}
   const io=new IntersectionObserver(entries=>entries.forEach(entry=>{
