@@ -609,6 +609,301 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
   margin-top: 0.35rem;
 }
 
+
+/* ==========================================================================
+   MASTER MOBILE RESPONSIVENESS & ANIMATIONS OVERHAUL (All Existing Sections)
+   ========================================================================== */
+
+/* 1. Global Mobile Smoothness & Safe Overflows */
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Prevent iOS input auto-zoom by enforcing 16px font-size */
+@media (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Touch micro-interactions on all mobile interactive elements */
+@media (hover: none) and (pointer: coarse) {
+  button, .go, .tb, .mob-nav-item, .p, .cd, .pillar-card, .talent-cat-card, .quiz-opt-btn {
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.15s ease !important;
+  }
+  button:active, .go:active, .tb:active, .p:active, .cd:active {
+    transform: scale(0.96) !important;
+  }
+}
+
+/* 2. Hero & Gate Section Mobile Polish */
+@media (max-width: 600px) {
+  .gate {
+    min-height: 90svh;
+  }
+  .gate-h1 {
+    font-size: clamp(2rem, 8vw, 2.8rem) !important;
+    line-height: 1.25 !important;
+    padding: 0 0.5rem;
+  }
+  .gate-sub {
+    font-size: 0.95rem !important;
+    padding: 0 1rem;
+    line-height: 1.6;
+  }
+  .knock {
+    padding: 0.8rem 1.6rem !important;
+    font-size: 0.95rem !important;
+    border-radius: 999px !important;
+  }
+}
+
+/* 3. Stats Section Mobile 2x2 Grid with Frosted Glass */
+@media (max-width: 600px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+    padding: 1rem 0.5rem !important;
+  }
+  .stats .card {
+    padding: 1.2rem 0.75rem !important;
+    border-radius: 18px !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: rgba(14, 45, 51, 0.7) !important;
+    border: 1px solid rgba(200, 160, 74, 0.3) !important;
+  }
+  .stats b {
+    font-size: 2.2rem !important;
+  }
+  .stats small {
+    font-size: 0.82rem !important;
+  }
+}
+
+/* 4. About & Story Typography on Mobile */
+@media (max-width: 600px) {
+  .about, .story-wrap, .sec-head-wrap {
+    padding: 0 0.25rem !important;
+  }
+  .sec h2.disp {
+    font-size: clamp(1.8rem, 6vw, 2.4rem) !important;
+  }
+  .sec p.sub {
+    font-size: 0.95rem !important;
+    line-height: 1.7 !important;
+    padding: 0 0.5rem !important;
+  }
+  .story-text {
+    font-size: 1rem !important;
+    line-height: 1.85 !important;
+  }
+}
+
+/* 5. Tree Section Mobile Polish & Golden Thread */
+@media (max-width: 768px) {
+  .scroller {
+    max-height: 62svh !important;
+    border-radius: 20px !important;
+    background: radial-gradient(circle at center, rgba(14,45,51,0.9), #071B1F 90%) !important;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.6) !important;
+  }
+  /* Floating Action Buttons for Tree on Mobile */
+  .tree-mob-fab {
+    bottom: 12px !important;
+    right: 12px !important;
+    gap: 6px !important;
+  }
+  .tmf-btn {
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 0.95rem !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45) !important;
+  }
+  /* Mobile Node Sizing & Spacing */
+  .nt {
+    padding: 1.5rem 1rem 2rem !important;
+  }
+  .nt .p {
+    min-width: 130px !important;
+    max-width: 170px !important;
+    padding: 0.55rem 0.7rem !important;
+    border-radius: 14px !important;
+  }
+  .nt .p b {
+    font-size: 1.05rem !important;
+  }
+}
+
+/* Golden Ancestral Thread (Glowing Path to Ancestors) */
+.nt li.lit::before, .nt li.lit::after {
+  border-color: #E6C775 !important;
+  box-shadow: 0 0 10px rgba(230, 199, 117, 0.7) !important;
+}
+.nt ul.lit::before {
+  border-color: #E6C775 !important;
+  box-shadow: 0 0 10px rgba(230, 199, 117, 0.7) !important;
+}
+.p.lit {
+  border-color: #E6C775 !important;
+  box-shadow: 0 0 0 2px #C8A04A, 0 8px 20px rgba(200, 160, 74, 0.4) !important;
+}
+
+/* 6. 3D Ring Carousel on Mobile */
+@media (max-width: 600px) {
+  .car .stage {
+    min-height: 290px !important;
+  }
+  .ring3 {
+    transform: scale(0.72) !important;
+  }
+  .cap b {
+    font-size: 1.6rem !important;
+  }
+  .cbtn {
+    margin-top: 0.75rem !important;
+    gap: 1rem !important;
+  }
+  .cbtn .go {
+    padding: 0.6rem 1.4rem !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+/* 7. Arches / Features Section */
+@media (max-width: 600px) {
+  .arches {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+  .ar {
+    min-height: 140px !important;
+    padding: 1.25rem 1.2rem !important;
+    border-radius: 20px !important;
+  }
+  .ar h3 {
+    font-size: 1.35rem !important;
+  }
+  .ar p {
+    font-size: 0.88rem !important;
+    line-height: 1.6 !important;
+  }
+}
+
+/* 8. Talents & Solidarity Sections on Mobile */
+@media (max-width: 680px) {
+  .talents-categories-grid, .solidarity-pillars-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  .talent-cat-card, .pillar-card {
+    padding: 1.25rem 1.2rem !important;
+    border-radius: 20px !important;
+    border-width: 1.5px !important;
+  }
+}
+
+/* 9. Memorial / Fatiha Section Mobile Polish */
+@media (max-width: 600px) {
+  .fatiha-box {
+    padding: 1.5rem 1rem !important;
+    border-radius: 22px !important;
+    margin: 1rem 0 !important;
+  }
+  .fatiha-text {
+    font-size: 1.25rem !important;
+    line-height: 2.1 !important;
+    padding: 1rem 0.5rem !important;
+    border-radius: 14px !important;
+  }
+  .fatiha-btn {
+    width: 100% !important;
+    padding: 0.9rem 1rem !important;
+    font-size: 1rem !important;
+    border-radius: 14px !important;
+    flex-direction: column !important;
+    gap: 0.4rem !important;
+  }
+  .mp-player-card {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 0.75rem !important;
+    padding: 1rem !important;
+  }
+}
+
+/* 10. Quiz & Games Section Mobile Polish */
+@media (max-width: 600px) {
+  .quiz-box {
+    padding: 1.4rem 1rem !important;
+    border-radius: 20px !important;
+  }
+  .quiz-options {
+    grid-template-columns: 1fr !important;
+    gap: 0.65rem !important;
+  }
+  .quiz-opt-btn {
+    min-height: 48px !important;
+    font-size: 0.95rem !important;
+    padding: 0.75rem 1rem !important;
+  }
+  .quiz-header {
+    flex-direction: column !important;
+    gap: 0.4rem !important;
+    text-align: center !important;
+  }
+}
+
+/* 11. Profile Modal Bottom Sheet on Mobile */
+@media (max-width: 600px) {
+  .pc {
+    padding: 0 !important;
+    align-items: flex-end !important;
+  }
+  .prof-modal-wrap {
+    border-radius: 24px 24px 0 0 !important;
+    max-height: 88svh !important;
+    width: 100% !important;
+    border-bottom: none !important;
+  }
+  .prof-hero-head {
+    grid-template-columns: 1fr !important;
+    text-align: center !important;
+    padding: 1.4rem 1rem !important;
+    gap: 0.8rem !important;
+  }
+  .prof-avatar-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .prof-headline-name {
+    font-size: 1.9rem !important;
+  }
+  .prof-actions-row {
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+  }
+  .prof-nav-tabs {
+    overflow-x: auto !important;
+    justify-content: flex-start !important;
+    padding: 0.4rem 0.6rem !important;
+    scrollbar-width: none;
+  }
+  .prof-nav-tabs::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* 12. GPU-Accelerated Scroll Entrance Animations */
+.sec, .stats, .stack .card, .ar, .talent-cat-card, .pillar-card, .fatiha-box, .quiz-box {
+  will-change: transform, opacity;
+}
+
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
