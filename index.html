@@ -33,7 +33,7 @@ html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#071B1F;--ink:#E4F0ED;--muted:#8FB0AC;--line:#1E3E42;--panel:#0E2A2F;--bark:#B58E54;--ground:#12402F;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#071B1F;--ink:#E4F0ED;--muted:#8FB0AC;--line:#1E3E42;--panel:#0E2A2F;--bark:#B58E54;--ground:#12402F;color-scheme:dark}
 *{box-sizing:border-box;margin:0}
-body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Arabic",system-ui,sans-serif;line-height:1.9;font-size:1.0625rem;overflow-x:hidden}
+body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Arabic",system-ui,sans-serif;line-height:1.9;font-size:1.0625rem;overflow-x:clip}
 .disp{font-family:"Aref Ruqaa",serif;font-weight:700;line-height:1.3}
 .g0{--c:#17406F;--f:#E8F1FB}.g1{--c:#0F6B58;--f:#E6F6F1}.g2{--c:#D4A63A;--f:#2A1E04}.g3{--c:#A93A52;--f:#FFEFF3}
 .go{display:inline-block;padding:.8rem 1.8rem;border-radius:999px;background:var(--ink);color:var(--bg);text-decoration:none;font:500 1rem inherit;font-family:inherit;border:2px solid var(--ink);cursor:pointer;transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
@@ -83,7 +83,7 @@ a:focus-visible,button:focus-visible,.node:focus-visible{outline:3px solid #3B6F
 .stats b{display:block;font:700 clamp(3.4rem,11vw,8rem)/1.1 "Aref Ruqaa",serif}.stats span{color:var(--muted)}
 
 /* generation cards */
-.stack{padding:6vh clamp(.75rem,4vw,3rem) 14vh}
+
 .card{position:sticky;top:calc(11vh + var(--i)*26px);height:min(70vh,520px);margin:0 auto 22vh;max-width:1080px;border-radius:28px;padding:clamp(1.5rem,4vw,3.25rem);display:grid;grid-template-columns:1.1fr .9fr;gap:2rem;background:var(--c);color:var(--f);
   transform-origin:top center;will-change:transform;overflow:hidden;box-shadow:0 -1px 0 rgba(255,255,255,.2) inset,0 24px 48px -24px rgba(0,0,0,.5)}
 .card:last-child{margin-bottom:0}
@@ -380,7 +380,7 @@ button.rl:hover{background:var(--gold);color:#241A05}
 .hadith{max-width:860px;margin:1.2rem auto 0;text-align:center;font:400 1.3rem/2 Amiri,serif;color:var(--muted)}.hadith small{font:500 .9rem "IBM Plex Sans Arabic",sans-serif}
 .story li{padding-bottom:1.6rem}.story strong{display:block;font:700 1.5rem "Aref Ruqaa",serif}.story p{color:var(--muted);margin:.2rem 0 0;max-width:56ch}
 .split{font-family:Amiri,"IBM Plex Sans Arabic",serif}
-.stack.many .card{height:min(54vh,430px);margin-bottom:9vh}
+
 
 /* 2026 refinement: direct entrance, readable editorial sections and map mode */
 .brand-seal{width:2.55rem;height:2.55rem;display:grid;place-items:center;border:1.5px solid var(--gold);border-radius:50%;font:700 1.65rem "Aref Ruqaa",serif;color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent);box-shadow:inset 0 0 0 3px color-mix(in srgb,var(--gold) 22%,transparent)}
@@ -401,8 +401,7 @@ button.rl:hover{background:var(--gold);color:#241A05}
 #about .about p:first-of-type{font-weight:600}
 #about .vals span{font-size:.95rem;background:color-mix(in srgb,var(--gold) 9%,var(--panel))}
 .mih p{font-size:clamp(1.8rem,4vw,2.7rem);font-weight:700;line-height:1.8}
-/* Stacking cards restored */
-.stack .card:last-child{margin-bottom:0}
+
 .hub-buttons{display:flex;gap:.7rem;flex-wrap:wrap;align-items:center}.wa-cta{background:#147A53;border-color:#147A53;color:#fff}.wa-cta:hover{background:#0f6847}
 .wa-float{position:fixed;z-index:80;right:1rem;bottom:calc(1rem + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:.55rem;padding:.7rem 1rem;border-radius:999px;background:#147A53;color:#fff;text-decoration:none;font-weight:700;box-shadow:0 12px 35px rgba(0,0,0,.22);transition:transform .25s,box-shadow .25s}
 .wa-float:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.28)}
@@ -431,7 +430,7 @@ button.rl:hover{background:var(--gold);color:#241A05}
 @media(max-width:760px){
  .gate{height:100svh;min-height:560px}.gate-in{height:100svh;min-height:560px}.gate-in>.hero{grid-template-columns:1fr;align-content:center;padding:5.5rem 1.1rem 2rem;text-align:center}.gate-in>.hero>svg{order:-1;width:min(65vw,260px);max-height:30svh}.gate-in>.hero h1{font-size:clamp(3.5rem,17vw,5.5rem)}
  .knock span{font-size:clamp(2rem,8vw,3.4rem)}.leaf{width:50%}
- .stack .card,.stack.many .card{min-height:0;padding:1.35rem;margin-bottom:1rem;grid-template-columns:1fr}
+ 
  #about .about>div:first-child{padding:1.15rem;border-radius:20px}#about .about p{font-size:1.02rem;line-height:2}
  .hub-buttons{width:100%}.hub-buttons .go{width:100%;text-align:center}.wa-float{right:.7rem;bottom:calc(.7rem + env(safe-area-inset-bottom,0px));padding:.65rem .85rem}.wa-float span{font-size:.85rem}
  .scroller.map-fullscreen{padding-top:4.2rem!important}.map-fs-tools button{padding:.5rem .75rem;font-size:.86rem}
@@ -490,7 +489,7 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
   .sec{padding:8vh 1rem 3vh}.sec h2{font-size:clamp(2.15rem,10vw,3.5rem);line-height:1.35}
   .stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:.25rem;margin:5vh auto 2vh;padding:0 .65rem}
   .stats b{font-size:clamp(2.1rem,10vw,3.2rem)}.stats span{font-size:.8rem}
-  .stack{padding:4vh .8rem 7vh}.stack .card,.stack.many .card{position:relative;top:auto;height:auto;min-height:440px;margin:0 auto 1rem;padding:1.35rem;grid-template-columns:1fr;gap:.8rem;border-radius:22px}
+  
   .card h2{font-size:clamp(2rem,9vw,3rem)}.card p{max-width:unset}
   .about,.how{grid-template-columns:1fr;gap:1.3rem}.mih{width:min(76vw,300px)}
   .arches{height:auto;display:grid;grid-template-columns:1fr 1fr;gap:.7rem}.ar{min-height:185px;border-radius:24px;padding:1rem;justify-content:flex-end}.ar h3{font-size:1.4rem;white-space:normal}.ar p{max-height:none;opacity:.92;font-size:.88rem}.ar>svg{top:1rem;width:42px;height:42px}
@@ -501,7 +500,7 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
   .scroller{max-height:68svh;padding:.45rem;border-radius:16px;overflow:auto;touch-action:pan-x pan-y}
   #svg{max-width:none}
   .panel{padding:1rem;border-radius:17px;overflow-wrap:anywhere}.panel h3{font-size:1.7rem}
-  .car .stage{min-height:270px}.ring3{transform:scale(.78);transform-origin:center}
+  .car .stage{min-height:270px}/* ring3 scale moved to JS */
   .cap{gap:.45rem}.cap b{font-size:1.8rem}
   .arena{border-radius:18px}#gc{height: min(55svh,390px)}.hud{inset-inline:.65rem;font-size:.82rem}.hud b{font-size:1.2rem}.ov{padding:1rem}.ov h3{font-size:2.2rem}.ov p{font-size:.9rem}
   .ayah{padding:1.2rem .9rem;border-radius:20px}.hadith{font-size:1.1rem}
@@ -548,9 +547,8 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
 
 /* Final cascade overrides: entrance and generation cards behave consistently on every viewport. */
 @media(max-width:760px){.gate{height:100svh!important;min-height:560px}.gate-in{height:100svh!important;min-height:560px}.gate-in>.hero{position:absolute!important;min-height:0!important}}
-/* Stacking cards override removed */
-.stack .card:last-child,.stack.many .card:last-child{margin-bottom:0!important}
-@media(max-width:760px){.stack .card,.stack.many .card{min-height:0!important;margin:0 auto 1rem!important;padding:1.35rem!important;grid-template-columns:1fr!important}}
+
+@media(max-width:760px){}
 
 /* Fullscreen entry control and HTML-tree fullscreen support */
 .map-open{display:inline-flex!important;align-items:center;justify-content:center;gap:.65rem;min-height:46px;padding:.55rem 1rem!important;border:2px solid var(--gold)!important;border-radius:999px!important;background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 22%,var(--panel)),var(--panel))!important;color:var(--ink)!important;font-weight:800!important;box-shadow:0 7px 22px color-mix(in srgb,var(--gold) 22%,transparent);animation:mapButtonPulse 2.8s ease-in-out infinite}
@@ -615,7 +613,7 @@ button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
 
 /* 1. Global Mobile Smoothness & Safe Overflows */
 html, body {
-  overflow-x: hidden !important;
+  overflow-x: clip !important;
   max-width: 100vw;
   -webkit-font-smoothing: antialiased;
 }
@@ -756,9 +754,7 @@ html, body {
   .car .stage {
     min-height: 290px !important;
   }
-  .ring3 {
-    transform: scale(0.72) !important;
-  }
+  /* ring3 scale moved to JS */
   .cap b {
     font-size: 1.6rem !important;
   }
@@ -904,61 +900,7 @@ html, body {
 }
 
 
-/* ========================================================
-   RESTORED: LUXURY 3D STACKING GENERATION CARDS (Desktop & Mobile)
-   ======================================================== */
-.stack {
-  position: relative !important;
-  padding: 6vh clamp(.75rem, 4vw, 3rem) 22vh !important;
-  isolation: isolate !important;
-}
-.stack .card, .stack.many .card {
-  position: sticky !important;
-  top: calc(85px + var(--i) * 22px) !important;
-  height: min(68vh, 520px) !important;
-  min-height: 380px !important;
-  margin: 0 auto 14vh !important;
-  max-width: 1080px !important;
-  border-radius: 28px !important;
-  transform-origin: top center !important;
-  will-change: transform !important;
-  z-index: calc(20 + var(--i)) !important;
-  opacity: 1 !important;
-  box-shadow: 0 24px 60px -20px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.15) inset !important;
-  overflow: hidden !important;
-}
-.stack .card:last-child {
-  margin-bottom: 0 !important;
-}
-
-@media (max-width: 768px) {
-  .stack {
-    padding: 5vh 0.75rem 16vh !important;
-  }
-  .stack .card, .stack.many .card {
-    position: sticky !important;
-    top: calc(72px + var(--i) * 14px) !important;
-    height: min(68svh, 540px) !important;
-    min-height: 390px !important;
-    margin: 0 auto 11vh !important;
-    border-radius: 22px !important;
-    padding: 1.25rem !important;
-    grid-template-columns: 1fr !important;
-    gap: 0.75rem !important;
-    z-index: calc(20 + var(--i)) !important;
-    transform-origin: top center !important;
-  }
-  .stack .card .mem {
-    max-height: 32svh !important;
-    overflow-y: auto !important;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
-  }
-  .stack .card .num {
-    font-size: clamp(3.5rem, 18vw, 6rem) !important;
-    opacity: 0.16 !important;
-  }
-}
+/* Stack CSS — see FINAL AUTHORITATIVE block at end of styles */
 
 
 /* ── STRICT MOBILE TREE LOCK & CLEAN PRESENTATION ── */
@@ -991,6 +933,9 @@ html, body {
     touch-action: pan-x pan-y pinch-zoom !important;
   }
 }
+
+/* orphaned block removed — see FINAL AUTHORITATIVE block at end of styles */
+
 
 </style>
 
@@ -2133,25 +2078,26 @@ addEventListener('keydown',e=>{if(e.key==='Escape')closeCard()});
 pcard.addEventListener('change',e=>{if(e.target.type!=='file'||!e.target.files[0])return;const r=new FileReader();
   r.onload=()=>{cur.img=r.result;persist();pcard.innerHTML=cardHTML(cur);pcard.classList.remove('in');void pcard.offsetWidth;pcard.classList.add('in');if(mode==='cards')renderCards();window.rebuildCar&&window.rebuildCar()};r.readAsDataURL(e.target.files[0])});
 
-// ---- 3D family carousel (Continuous Auto-Spin + Touch & Flip) ----
+// ---- 3D family carousel (Guaranteed Continuous Auto-Spin + Touch Swipe) ----
 (()=>{
-  let LIST=carList(),N=LIST.length,step=360/N;const car=$('car'),r3=$('r3'),stg=$('stg'),cap=$('cap');
-  let rot=0,v=0.35,tgt=null,drag=0,hover=0,cm=0,front=-1;
-  let lastX=0;
-  const BACK='<svg viewBox="-100 -100 200 200" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="3"><rect x="-55" y="-55" width="110" height="110"/><rect x="-55" y="-55" width="110" height="110" transform="rotate(45)"/><circle r="30"/></g></svg>';
+  let LIST = carList(), N = LIST.length, step = 360 / N;
+  const car = $('car'), r3 = $('r3'), stg = $('stg'), cap = $('cap');
+  let rot = 0, v = 0.35, tgt = null, drag = 0, cm = 0, front = -1;
+  let lastTouchX = 0;
+  const BACK = '<svg viewBox="-100 -100 200 200" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="3"><rect x="-55" y="-55" width="110" height="110"/><rect x="-55" y="-55" width="110" height="110" transform="rotate(45)"/><circle r="30"/></g></svg>';
 
   function build(){
-    r3.innerHTML=LIST.map((n,i)=>`<div class="cd" data-i="${i}" data-open="${n.id}" role="button" tabindex="0" aria-label="${n.n}، ${n.sf}" style="${pcs(n)}"><div class="cd-in">
-      <div class="cd-f"><span class="cd-ph">${n.img?`<img src="${n.img}" alt="">`:n.n[0]}</span><b class="disp">${n.n}</b><span class="cd-sf">${n.sf}</span><small>${n.y}</small></div>
+    r3.innerHTML = LIST.map((n, i) => `<div class="cd" data-i="${i}" data-open="${n.id}" role="button" tabindex="0" aria-label="${n.n}، ${n.sf}" style="${pcs(n)}"><div class="cd-in">
+      <div class="cd-f"><span class="cd-ph">${n.img ? `<img src="${n.img}" alt="">` : n.n[0]}</span><b class="disp">${n.n}</b><span class="cd-sf">${n.sf}</span><small>${n.y}</small></div>
       <div class="cd-b">${BACK}</div></div></div>`).join('');
   }
 
   function layout(){
     const isMob = innerWidth < 650;
     const isTiny = innerWidth < 380;
-    const cw = isTiny ? 122 : (isMob ? 138 : 190);
+    const cw = isTiny ? 124 : (isMob ? 138 : 190);
     const ch = Math.round(cw * 1.48);
-    const R = Math.round((cw / 2) / Math.tan(Math.PI / N)) + (isMob ? 20 : 34);
+    const R = Math.round((cw / 2) / Math.tan(Math.PI / N)) + (isMob ? 22 : 36);
     car.style.setProperty('--cw', cw + 'px');
     car.style.setProperty('--ch', ch + 'px');
     car.dataset.R = R;
@@ -2207,40 +2153,39 @@ pcard.addEventListener('change',e=>{if(e.target.type!=='file'||!e.target.files[0
     tgt = b + 360 * Math.round((rot - b) / 360);
   };
 
-  // Continuous 60fps Rotation Loop
+  // Continuous Auto-Rotation Loop
   function frame(){
-    const r = car.getBoundingClientRect();
-    const inView = r.bottom > 0 && r.top < innerHeight;
-    if (inView) {
-      if (tgt !== null) {
-        rot += (tgt - rot) * 0.12;
-        if (Math.abs(tgt - rot) < 0.05) {
-          rot = tgt;
-          tgt = null;
-        }
-      } else if (!drag) {
-        // Continuous auto-spin around itself
-        const isMouseDevice = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-        const targetV = (isMouseDevice && hover) ? 0 : 0.32;
-        v += (targetV - v) * 0.06;
-        rot += v;
+    const isMob = innerWidth < 650;
+    const scale = isMob ? 0.78 : 1;
+
+    if (tgt !== null) {
+      rot += (tgt - rot) * 0.12;
+      if (Math.abs(tgt - rot) < 0.05) {
+        rot = tgt;
+        tgt = null;
       }
-      r3.style.transform = `translateZ(${-(+car.dataset.R)}px) rotateY(${rot.toFixed(2)}deg)`;
-      const f = ((Math.round(-rot / step) % N) + N) % N;
-      if (f !== front) {
-        front = f;
-        setFront();
-      }
+    } else if (!drag) {
+      // Auto-spin smoothly at 0.32 degrees per frame
+      v += (0.32 - v) * 0.05;
+      rot += v;
+    }
+
+    r3.style.transform = `scale(${scale}) translateZ(${-(+car.dataset.R)}px) rotateY(${rot.toFixed(2)}deg)`;
+
+    const f = ((Math.round(-rot / step) % N) + N) % N;
+    if (f !== front) {
+      front = f;
+      setFront();
     }
     requestAnimationFrame(frame);
   }
 
-  // ── Unified Touch Controls for Mobile ──
+  // Mobile Touch Swipe Handling
   stg.addEventListener('touchstart', e => {
     if (e.touches.length === 1) {
       drag = 1;
       cm = 0;
-      lastX = e.touches[0].clientX;
+      lastTouchX = e.touches[0].clientX;
       tgt = null;
     }
   }, { passive: true });
@@ -2248,55 +2193,37 @@ pcard.addEventListener('change',e=>{if(e.target.type!=='file'||!e.target.files[0
   stg.addEventListener('touchmove', e => {
     if (!drag || e.touches.length !== 1) return;
     const curX = e.touches[0].clientX;
-    const dx = curX - lastX;
-    lastX = curX;
+    const dx = curX - lastTouchX;
+    lastTouchX = curX;
     cm += Math.abs(dx);
-    rot += dx * 0.55;
+    rot += dx * 0.52;
     v = dx * 0.35;
   }, { passive: true });
 
-  stg.addEventListener('touchend', () => {
-    drag = 0;
-    hover = 0;
-  }, { passive: true });
+  stg.addEventListener('touchend', () => { drag = 0; }, { passive: true });
+  stg.addEventListener('touchcancel', () => { drag = 0; }, { passive: true });
 
-  stg.addEventListener('touchcancel', () => {
-    drag = 0;
-    hover = 0;
-  }, { passive: true });
-
-  // ── Mouse Drag for Desktop ──
+  // Desktop Mouse Drag Handling
   stg.addEventListener('mousedown', e => {
     if (e.button !== 0) return;
     drag = 1;
     cm = 0;
-    lastX = e.clientX;
+    lastTouchX = e.clientX;
     tgt = null;
   });
 
   window.addEventListener('mousemove', e => {
     if (!drag) return;
-    const dx = e.clientX - lastX;
-    lastX = e.clientX;
+    const dx = e.clientX - lastTouchX;
+    lastTouchX = e.clientX;
     cm += Math.abs(dx);
     rot += dx * 0.45;
     v = dx * 0.35;
   });
 
-  window.addEventListener('mouseup', () => {
-    drag = 0;
-  });
+  window.addEventListener('mouseup', () => { drag = 0; });
 
-  stg.addEventListener('mouseenter', () => {
-    const isMouse = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    if (isMouse) hover = 1;
-  });
-
-  stg.addEventListener('mouseleave', () => {
-    hover = 0;
-  });
-
-  // Tap handling
+  // Card Click / Tap Handling
   stg.addEventListener('click', e => {
     const c = e.target.closest('.cd');
     if (cm > 8) {
@@ -2312,7 +2239,6 @@ pcard.addEventListener('change',e=>{if(e.target.type!=='file'||!e.target.files[0
         e.preventDefault();
         snap(idx);
       } else {
-        // Front card clicked -> open its profile
         const openId = c.dataset.open;
         if (openId && typeof ALL !== 'undefined') {
           openCard(ALL[+openId]);
@@ -2320,15 +2246,6 @@ pcard.addEventListener('change',e=>{if(e.target.type!=='file'||!e.target.files[0
       }
     }
   }, true);
-
-  stg.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      const c = e.target.closest('.cd');
-      if (c) { e.preventDefault(); c.click(); }
-    }
-    if (e.key === 'ArrowLeft') $('cnext').click();
-    if (e.key === 'ArrowRight') $('cprev').click();
-  });
 
   $('cnext').addEventListener('click', () => { tgt = -(Math.round(-rot / step) + 1) * step; });
   $('cprev').addEventListener('click', () => { tgt = -(Math.round(-rot / step) - 1) * step; });
@@ -3089,23 +3006,15 @@ $('foot').addEventListener('pointermove',e=>{const r=$('word').getBoundingClient
 .gate-in .leaf{visibility:visible!important;opacity:1;transition:transform 1.05s cubic-bezier(.76,0,.18,1),opacity .35s ease!important}
 .gate-in.open .leaf{visibility:visible!important;opacity:0;transition:transform 1.05s cubic-bezier(.76,0,.18,1),opacity .35s ease .72s!important}
 .gate-in .knock{transition:opacity .35s ease,transform .5s ease!important}
-.stack{position:relative;padding:7vh clamp(.75rem,4vw,3rem) 18vh;isolation:isolate}
-.stack .card,.stack.many .card{position:sticky!important;top:clamp(76px,10vh,104px)!important;height:min(66vh,520px)!important;min-height:390px!important;margin:0 auto 13vh!important;max-width:1080px!important;transform-origin:top center;will-change:transform,opacity;transition:box-shadow .35s ease,border-color .35s ease!important;box-shadow:0 24px 65px -34px rgba(0,0,0,.48),0 8px 24px rgba(0,0,0,.12)!important;border:1px solid color-mix(in srgb,var(--gold) 40%,transparent)!important;overflow:hidden}
-.stack .card:last-child{margin-bottom:0!important}
-.stack .card{z-index:calc(20 + var(--i))!important}
+/* Stack CSS — see FINAL AUTHORITATIVE block below */
 .stack .card.reveal{opacity:0;transform:translateY(48px) scale(.985);transition:opacity .65s ease,box-shadow .35s ease!important}
-.stack .card.reveal.is-visible{opacity:1;transform:scale(1)}
-.stack .card .num{opacity:.18}
+.stack .card.reveal.is-visible{opacity:1;transform:none}
 @media(max-width:760px){
  .gate{height:142svh!important;min-height:0!important}
  .gate-in{height:100svh!important;min-height:0!important}
  .gate-in>.hero{position:absolute!important;min-height:0!important}
- .stack{padding:5vh .75rem 12vh!important}
- .stack .card,.stack.many .card{position:sticky!important;top:calc(72px + env(safe-area-inset-top,0px))!important;height:min(68svh,570px)!important;min-height:420px!important;margin:0 auto 11vh!important;padding:1.15rem!important;grid-template-columns:1fr!important;gap:.75rem!important;border-radius:22px!important;transform-origin:top center!important}
- .stack .card .mem{max-height:34svh;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
- .stack .card .num{font-size:clamp(3.5rem,18vw,6rem)}
 }
-@media(prefers-reduced-motion:reduce){.gate-in .leaf,.stack .card{transition:none!important}.stack .card{position:relative!important;top:auto!important;height:auto!important;margin-bottom:1.25rem!important}}
+@media(prefers-reduced-motion:reduce){.gate-in .leaf{transition:none!important}}
 
 
 /* ========================================================
@@ -4538,9 +4447,7 @@ svg { overflow: visible; }
 .car .stage:active {
   cursor: grabbing !important;
 }
-.cd {
-  transition: transform 0.4s ease, filter 0.4s ease !important;
-}
+/* removed transition on .cd to allow smooth 60fps spin */
 .cd.front {
   filter: drop-shadow(0 12px 28px rgba(200, 160, 74, 0.55)) !important;
 }
@@ -5180,14 +5087,7 @@ svg { overflow: visible; }
   text-overflow: ellipsis !important;
 }
 @media (max-width: 760px) {
-  .card {
-    grid-template-columns: 1fr !important;
-    height: auto !important;
-    min-height: 460px !important;
-    max-height: 80vh !important;
-    padding: 1.25rem !important;
-    gap: 1rem !important;
-  }
+  /* restored fixed height for card stacking */
   .mem {
     max-height: 270px !important;
     grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)) !important;
@@ -5578,6 +5478,133 @@ p {
 .btn-join-network:hover {
   background: #FFE082;
   transform: translateY(-2px);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   FINAL AUTHORITATIVE STACKING CARDS — آل راضي
+   يجب أن يكون هذا آخر CSS يُطبَّق على .stack
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Reset any rogue rules */
+html, body {
+  overflow-x: clip !important;
+}
+
+.stack {
+  position: relative !important;
+  padding: 8vh clamp(0.75rem, 4vw, 3rem) 32vh !important;
+  isolation: isolate !important;
+  overflow: visible !important;
+}
+
+.stack .card,
+.stack.many .card {
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: clamp(76px, 10vh, 100px) !important;
+  height: min(66vh, 520px) !important;
+  min-height: 380px !important;
+  margin: 0 auto 16vh !important;
+  max-width: 1080px !important;
+  border-radius: 28px !important;
+  z-index: calc(20 + var(--i)) !important;
+  transform-origin: top center !important;
+  will-change: transform !important;
+  overflow: hidden !important;
+  box-shadow:
+    0 24px 65px -20px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(255,255,255,0.10) inset,
+    0 1px 0 rgba(255,255,255,0.08) inset !important;
+  border: 1px solid color-mix(in srgb, var(--gold) 35%, transparent) !important;
+  transition: box-shadow 0.35s ease, border-color 0.35s ease !important;
+  /* NO transform here — JS handles scale via IntersectionObserver if needed */
+}
+
+.stack .card:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .stack {
+    padding: 6vh 0.75rem 28vh !important;
+    overflow: visible !important;
+  }
+
+  .stack .card,
+  .stack.many .card {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: calc(70px + var(--i, 0) * 10px) !important;
+    height: min(68svh, 560px) !important;
+    min-height: 400px !important;
+    margin: 0 auto 14vh !important;
+    padding: 1.25rem 1rem !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+    border-radius: 22px !important;
+    z-index: calc(20 + var(--i, 0)) !important;
+    transform-origin: top center !important;
+    overflow: hidden !important;
+  }
+
+  .stack .card .mem {
+    max-height: 32svh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+  }
+
+  .stack .card .num {
+    font-size: clamp(3.5rem, 18vw, 6rem) !important;
+    opacity: 0.15 !important;
+  }
+}
+
+/* Tiny phones */
+@media (max-width: 390px) {
+  .stack .card,
+  .stack.many .card {
+    top: calc(64px + var(--i, 0) * 8px) !important;
+    height: min(72svh, 580px) !important;
+    min-height: 380px !important;
+    margin: 0 auto 12vh !important;
+    padding: 1rem 0.75rem !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CAROUSEL 3D — ضمان الدوران الدائم على موبايل
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* منع أي CSS من إيقاف transform على r3 */
+#r3 {
+  transform-style: preserve-3d !important;
+  backface-visibility: hidden !important;
+  /* لا تضع transform هنا — JS يتحكم بها */
+}
+
+#r3 .cd {
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+  /* لا transition على transform للكروت الفردية — الـ JS يتحكم بـ r3 ككتلة */
+  transition: filter 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+/* ضمان ظهور الـ stg (carousel stage) بالأبعاد الصحيحة */
+#stg {
+  position: relative !important;
+  perspective: 1200px !important;
+  transform-style: preserve-3d !important;
+}
+
+#car {
+  position: relative !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  perspective: 1200px !important;
 }
 
 </style>
