@@ -291,7 +291,7 @@ button.rl:hover{background:var(--gold);color:#241A05}
 .car{position:relative;margin-top:1rem}
 .car::before{content:"";position:absolute;left:12%;right:12%;bottom:18%;height:80px;background:radial-gradient(ellipse,rgba(200,160,74,.45),transparent 70%);filter:blur(10px);pointer-events:none}
 .ring-bg{position:absolute;inset:0;margin:auto;width:min(100%,760px);opacity:.3;animation:spin 90s linear infinite;pointer-events:none}
-.car .stage{position:relative;perspective:1500px;display:grid;place-items:center;overflow:hidden;cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.car .stage{position:relative;perspective:1500px;display:grid;place-items:center;overflow:visible;cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none}
 .car .stage:active{cursor:grabbing}
 .ring3{position:relative;width:var(--cw);height:var(--ch);transform-style:preserve-3d;will-change:transform}
 .cd{position:absolute;inset:0;transform-style:preserve-3d}
@@ -903,26 +903,9 @@ html, body {
 /* Stack CSS — see FINAL AUTHORITATIVE block at end of styles */
 
 
-/* ── STRICT MOBILE TREE LOCK & CLEAN PRESENTATION ── */
+/* ── MOBILE TREE PRESENTATION (tabs & views ENABLED) ── */
 @media (max-width: 768px) {
-  #tabs, .tabs {
-    display: none !important;
-  }
-  #mapOpen, .map-open {
-    display: none !important;
-  }
-  #netControls {
-    display: none !important;
-  }
-  #cards {
-    display: none !important;
-  }
-  #gens {
-    display: none !important;
-  }
-  #svg {
-    display: none !important;
-  }
+  /* Allow all tabs to be visible and scrollable */
   .nt {
     display: block !important;
     width: max-content !important;
@@ -2376,7 +2359,7 @@ function buildChips(){
 }
 function setFocus(n){focusN=n&&n!==T?n:null;sel=null;panel.innerHTML='<p class="mt">اختر فردًا من الشجرة لتعرف نسبه وصلته بك.</p>';render();window.rebuildCar&&window.rebuildCar();setTimeout(()=>autoFitTree(true),60);}
 function render(){
-  if (window.innerWidth <= 768) { mode = 'tree'; }
+  // Mobile no longer locked to 'tree' — user can switch freely
   cancelAnimationFrame(netRaf);if(focusN&&!ALL.includes(focusN))focusN=null;
   buildTabs();buildChips();$('vhint').textContent=VIEWS.find(v=>v[0]===mode)[3];
   svg.hidden=!SVGV.includes(mode);const fullscreenSupported=mode==='tree'||SVGV.includes(mode);$('mapOpen').hidden=!fullscreenSupported;if(scr.classList.contains('map-fullscreen')&&!fullscreenSupported)closeMapFullscreen();$('netControls').classList.toggle('active',mode==='net');ht.hidden=mode!=='tree';gens.hidden=!(mode==='g'||mode==='b');$('cards').hidden=mode!=='cards';scr.hidden=mode==='cards';$('zm').hidden=['cards','g','b'].includes(mode);
@@ -5575,36 +5558,176 @@ html, body {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   CAROUSEL 3D — ضمان الدوران الدائم على موبايل
+   CAROUSEL 3D — FINAL AUTHORITATIVE CSS
+   الكروت تلف دائماً على موبايل ولابتوب
    ═══════════════════════════════════════════════════════════════════ */
 
-/* منع أي CSS من إيقاف transform على r3 */
-#r3 {
-  transform-style: preserve-3d !important;
-  backface-visibility: hidden !important;
-  /* لا تضع transform هنا — JS يتحكم بها */
+/* الـ container الرئيسي */
+.car {
+  position: relative !important;
+  overflow: visible !important;
 }
 
-#r3 .cd {
-  backface-visibility: hidden !important;
-  -webkit-backface-visibility: hidden !important;
-  /* لا transition على transform للكروت الفردية — الـ JS يتحكم بـ r3 ككتلة */
-  transition: filter 0.3s ease, box-shadow 0.3s ease !important;
-}
-
-/* ضمان ظهور الـ stg (carousel stage) بالأبعاد الصحيحة */
+/* الـ stage يجب أن لا يكون overflow:hidden أبداً */
+.car .stage,
 #stg {
   position: relative !important;
-  perspective: 1200px !important;
+  overflow: visible !important;
+  perspective: 1400px !important;
   transform-style: preserve-3d !important;
+  display: grid !important;
+  place-items: center !important;
 }
 
-#car {
+/* ring3 — الحاوي الذي يدور */
+.ring3,
+#r3 {
   position: relative !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  perspective: 1200px !important;
+  transform-style: preserve-3d !important;
+  will-change: transform !important;
+  /* JS يتحكم في transform — لا تضع transform هنا */
+}
+
+/* الكروت الفردية */
+#r3 .cd,
+.ring3 .cd {
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+  /* NO transition on transform — JS يتحكم بـ r3 ككتلة */
+  transition: filter 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+/* الكرت الأمامي */
+.cd.front {
+  filter: drop-shadow(0 10px 25px rgba(200, 160, 74, 0.6)) !important;
+}
+
+/* موبايل: تحسين حجم الـ stage */
+@media (max-width: 650px) {
+  .car .stage,
+  #stg {
+    min-height: 300px !important;
+    perspective: 1100px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .car .stage,
+  #stg {
+    min-height: 260px !important;
+    perspective: 900px !important;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE TREE VIEW TABS — جميعها ظاهرة ومتجاوبة
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Tabs bar scrollable on mobile */
+.tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.3rem;
+}
+
+@media (max-width: 768px) {
+  .tabs {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding: 0.4rem 0.5rem !important;
+    gap: 0.35rem !important;
+    border-radius: 16px !important;
+    background: rgba(7, 27, 31, 0.9) !important;
+    border: 1px solid rgba(200, 160, 74, 0.3) !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .tabs button {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+    font-size: 0.8rem !important;
+    padding: 0.4rem 0.75rem !important;
+    border-radius: 999px !important;
+    min-height: 36px !important;
+    border: 1px solid transparent !important;
+    background: transparent !important;
+    color: rgba(234, 240, 246, 0.75) !important;
+    transition: background 0.2s, color 0.2s !important;
+    cursor: pointer !important;
+  }
+
+  .tabs button i {
+    display: inline-block !important;
+    margin-inline-end: 3px !important;
+  }
+
+  .tabs button[aria-selected="true"] {
+    background: linear-gradient(135deg, #C8A04A, #F3E5AB) !important;
+    color: #071B1F !important;
+    font-weight: 700 !important;
+    border-color: transparent !important;
+    box-shadow: 0 2px 10px rgba(200, 160, 74, 0.4) !important;
+  }
+
+  .tabs button:active {
+    transform: scale(0.94) !important;
+  }
+
+  /* Section header above tree — stack controls */
+  .tree-top {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+
+  /* chips row */
+  .chips2 {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    padding-bottom: 0.3rem !important;
+    scrollbar-width: none !important;
+  }
+  .chips2::-webkit-scrollbar { display: none !important; }
+  .chips2 > * { flex: none !important; }
+
+  /* scroller min-height */
+  .scroller {
+    min-height: 420px !important;
+    border-radius: 20px !important;
+  }
+
+  /* SVG-based views horizontal scroll */
+  #svg {
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  /* gens/cards views */
+  #gens, #cards {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* zoom controls */
+  #zm {
+    display: flex !important;
+    gap: 0.4rem !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    padding: 0.3rem !important;
+  }
 }
 
 </style>
